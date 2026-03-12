@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FY 2025–26 Project Status · City of Concord Transportation</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f3ef;--sur:#fff;--sur2:#f0ede8;--bdr:#ddd9d3;--ink:#1a1814;--ink2:#5a5650;--ink3:#9a9590;--grn:#2d6a4f;--grn2:#eaf4ee;--amb:#92400e;--amb2:#fef3c7;--red:#991b1b;--red2:#fee2e2;--blu:#1e40af;--blu2:#eff6ff;--acc:#c4773b;--rul:#c8c4be;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.5;}
+.mast{background:var(--ink);color:#f5f3ef;padding:20px 40px 16px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;}
+.mast h1{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;line-height:1.1;}
+.mast h1 em{font-style:italic;color:#c4a882;}
+.mast p{font-size:10px;color:#a09c96;margin-top:3px;font-family:'DM Mono',monospace;letter-spacing:.04em;text-transform:uppercase;}
+.mr{text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:#706c68;line-height:1.8;}
+.mr strong{color:#c4a882;font-size:12px;}
+.tnav{background:#111;display:flex;padding:0 40px;border-bottom:1px solid #2a2826;}
+.tbtn{padding:12px 20px 10px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#706c68;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap;}
+.tbtn:hover{color:#c4a882;}.tbtn.on{color:#f5f3ef;border-bottom-color:#c4773b;}
+.tp{display:none;}.tp.on{display:block;}
+.pg{max-width:1400px;margin:0 auto;padding:26px 40px 60px;}
+.sec{font-family:'DM Serif Display',serif;font-size:15px;font-weight:400;margin-bottom:14px;padding-bottom:8px;border-bottom:1.5px solid var(--rul);display:flex;align-items:baseline;gap:10px;}
+.sec span{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);letter-spacing:.06em;text-transform:uppercase;}
+.krow{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:26px;}
+.k{background:var(--sur);border:1px solid var(--bdr);border-radius:6px;padding:14px 15px;position:relative;overflow:hidden;}
+.k::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ka,var(--acc));}
+.kl{font-size:10px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:4px;}
+.kv{font-family:'DM Serif Display',serif;font-size:24px;line-height:1;color:var(--ink);margin-bottom:3px;}
+.ks{font-size:10.5px;color:var(--ink2);}
+.pill{display:inline-block;margin-top:4px;padding:2px 7px;border-radius:3px;font-size:10px;font-family:'DM Mono',monospace;font-weight:500;}
+.pg_{background:var(--grn2);color:var(--grn);}.pa_{background:var(--amb2);color:var(--amb);}.pr_{background:var(--red2);color:var(--red);}.pb_{background:var(--blu2);color:var(--blu);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:22px;}
+.card{background:var(--sur);border:1px solid var(--bdr);border-radius:6px;overflow:hidden;}
+.ch{padding:10px 14px 9px;border-bottom:1px solid var(--bdr);display:flex;flex-direction:column;gap:2px;}
+.ch h3{font-family:'DM Serif Display',serif;font-size:13px;font-weight:400;line-height:1.2;}
+.ch .bg{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);}
+.cb{padding:12px 14px;}
+.br{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--sur2);}
+.br:last-child{border-bottom:none;}
+.bn{flex:0 0 175px;font-size:11.5px;color:var(--ink2);}
+.bw{flex:1;height:6px;background:var(--sur2);border-radius:3px;overflow:hidden;position:relative;}
+.bf{height:100%;border-radius:3px;position:absolute;left:0;top:0;}
+.bpct{flex:0 0 34px;text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);}
+.bamt{flex:0 0 96px;text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--ink2);}
+.cmprow{display:flex;gap:5px;margin-top:5px;}
+.cmp{flex:1;background:var(--sur2);border-radius:4px;padding:7px 9px;text-align:center;}
+.cmp .y{font-family:'DM Mono',monospace;font-size:9px;color:var(--ink3);text-transform:uppercase;margin-bottom:2px;}
+.cmp .v{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--ink);}
+.cmp.cur{background:var(--ink);}.cmp.cur .y{color:#706c68;}.cmp.cur .v{color:#f5f3ef;}
+.cw{padding:12px 14px;}canvas{display:block;width:100%!important;}
+/* CIP tab */
+.fbar{display:flex;gap:6px;flex-wrap:wrap;padding:9px 14px;background:var(--sur2);border-bottom:1px solid var(--bdr);align-items:center;}
+.fb{padding:3px 10px;border-radius:3px;font-family:'DM Mono',monospace;font-size:10px;border:1px solid var(--bdr);background:var(--sur);color:var(--ink2);cursor:pointer;transition:all .12s;}
+.fb:hover,.fb.on{background:var(--ink);color:#f5f3ef;border-color:var(--ink);}
+.tsc{overflow:auto;max-height:660px;}
+table.ct{width:100%;border-collapse:collapse;font-size:11.5px;}
+.ct th{font-family:'DM Mono',monospace;font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);text-align:left;padding:7px 9px;background:var(--sur2);border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:2;cursor:pointer;white-space:nowrap;}
+.ct th:hover{color:var(--ink);}.ct th.r{text-align:right;}.ct th.c{text-align:center;}
+.ct td{padding:6px 9px;border-bottom:1px solid var(--sur2);vertical-align:middle;color:var(--ink2);}
+.ct td.nm{color:var(--ink);font-weight:500;max-width:195px;font-size:11.5px;}
+.ct td.mn{font-family:'DM Mono',monospace;font-size:10.5px;text-align:right;white-space:nowrap;}
+.ct tr:hover td{background:#faf8f5;}
+.sp{display:inline-block;padding:2px 7px;border-radius:10px;font-family:'DM Mono',monospace;font-size:9.5px;font-weight:500;white-space:nowrap;}
+.s-act{background:#dbeafe;color:#1e40af;}.s-ro{background:#fef3c7;color:#92400e;}
+.s-ac{background:#fee2e2;color:#991b1b;}.s-cm{background:#f3e8ff;color:#6b21a8;}.s-nw{background:#dcfce7;color:#166534;}
+.spk{display:flex;gap:2px;align-items:flex-end;height:20px;}
+.skb{min-width:6px;border-radius:1px 1px 0 0;}
+.ntag{display:inline-flex;align-items:center;padding:1px 6px;border-radius:2px;font-size:9.5px;font-family:'DM Mono',monospace;background:var(--amb2);color:var(--amb);line-height:1.3;}
+.fleg{display:flex;flex-wrap:wrap;gap:5px 12px;padding:8px 14px;background:var(--sur2);border-top:1px solid var(--bdr);font-family:'DM Mono',monospace;font-size:9.5px;color:var(--ink3);}
+@media(max-width:900px){.krow{grid-template-columns:repeat(3,1fr);}.g2,.g3{grid-template-columns:1fr;}}
+
+/* ── HUB DATA UPLOAD ── */
+#hub-upload-btn{position:fixed;bottom:20px;right:20px;z-index:9000;background:#005EB8;color:#fff;border:none;border-radius:8px;padding:10px 16px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,94,184,0.4);transition:all 0.2s;}
+#hub-upload-btn:hover{background:#0071e3;transform:translateY(-2px);}
+#hub-modal-bg{display:none;position:fixed;inset:0;z-index:9100;background:rgba(8,15,30,0.88);backdrop-filter:blur(8px);align-items:center;justify-content:center;}
+#hub-modal-bg.open{display:flex;}
+#hub-modal{background:#112240;border:1px solid rgba(255,199,44,0.2);border-radius:14px;padding:28px 32px;width:500px;max-width:95vw;box-shadow:0 24px 60px rgba(0,0,0,0.6);}
+.hub-mhdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;}
+.hub-mtitle{font-size:17px;font-weight:700;color:#fff;font-family:'Sora','DM Sans',sans-serif;}
+.hub-mclose{background:none;border:none;color:#7a90b0;font-size:22px;cursor:pointer;line-height:1;padding:0;}
+.hub-mclose:hover{color:#fff;}
+.hub-msub{font-size:12px;color:#7a90b0;margin-bottom:20px;line-height:1.5;font-family:'Sora','DM Sans',sans-serif;}
+.hub-drop{border:2px dashed rgba(0,94,184,0.5);border-radius:10px;padding:30px 20px;text-align:center;cursor:pointer;transition:all 0.2s;background:rgba(0,94,184,0.06);}
+.hub-drop:hover,.hub-drop.drag-over{border-color:#FFC72C;background:rgba(255,199,44,0.06);}
+.hub-drop input{display:none;}
+.hub-drop-icon{font-size:30px;margin-bottom:8px;}
+.hub-drop-txt{font-size:13px;color:#e8eef8;font-weight:600;font-family:'Sora','DM Sans',sans-serif;}
+.hub-drop-sub{font-size:10px;color:#7a90b0;margin-top:3px;font-family:'DM Mono',monospace;}
+.hub-fmt{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:11px 14px;margin-top:14px;font-size:11px;color:#7a90b0;font-family:'DM Mono',monospace;line-height:1.8;}
+.hub-fmt strong{color:#FFC72C;font-weight:500;}
+.hub-status{margin-top:12px;padding:9px 13px;border-radius:8px;font-size:12px;font-family:'DM Mono',monospace;display:none;}
+.hub-status.ok{background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.3);color:#34d399;display:block;}
+.hub-status.err{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#f87171;display:block;}
+.hub-status.load{background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.3);color:#60a5fa;display:block;}
+.hub-apply{width:100%;margin-top:14px;background:#005EB8;color:#fff;border:none;border-radius:8px;padding:11px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;display:none;}
+.hub-apply:hover{background:#0071e3;}
+.hub-apply.vis{display:block;}
+
+</style>
+</head>
+<body>
+
+<div class="mast">
+  <div>
+    <h1>FY 2025–26 <em>Project Status</em></h1>
+    <p>City of Concord · Transportation Division · As of February 2026</p>
+  </div>
+  <div class="mr">
+    <div><strong>67.4%</strong> of fiscal year elapsed (8 of 12 months)</div>
+    <div>Data: Lawson GL + CIP C1295 · Updated Feb 22–Mar 8, 2026</div>
+  </div>
+</div>
+
+<div class="tnav">
+  <button class="tbtn on" onclick="sw('op',this)">📊 Operating Budget</button>
+  <button class="tbtn" onclick="sw('cip',this)">🏗 CIP Tracker</button>
+</div>
+
+<!-- ══════════ TAB 1: OPERATING ══════════ -->
+<div id="t-op" class="tp on"><div class="pg">
+
+<div class="krow">
+  <div class="k" style="--ka:#2d6a4f"><div class="kl">CIP Total Budget</div><div class="kv">$22.2M</div><div class="ks">22 transport projects</div><span class="pill pg_">$16.8M remaining</span></div>
+  <div class="k" style="--ka:#1e40af"><div class="kl">CIP Spent YTD</div><div class="kv">$3.9M</div><div class="ks">18% of total budget</div><span class="pill pb_">+$1.4M encumbered</span></div>
+  <div class="k" style="--ka:#c4773b"><div class="kl">Operating Budget</div><div class="kv">$6.3M</div><div class="ks">All divisions combined</div><span class="pill pa_">54% spent thru Feb</span></div>
+  <div class="k" style="--ka:#2d6a4f"><div class="kl">Operating Revenue YTD</div><div class="kv">$723K</div><div class="ks">vs. $1.32M annual budget</div><span class="pill pa_">55% collected</span></div>
+  <div class="k" style="--ka:#991b1b"><div class="kl">Measure V (CIP)</div><div class="kv">$3.6M</div><div class="ks">Fund 490 allocated</div><span class="pill pa_">$1.3M remaining</span></div>
+</div>
+
+<div class="sec">Operating Expenditures <span>FY25–26 YTD through February · cumulative vs. annual budget</span></div>
+<div class="g2">
+  <div class="card">
+    <div class="ch"><h3>Spend by Category</h3><span class="bg">All Divisions · YTD Spent (solid) + Budget</span></div>
+    <div class="cb">
+      <div style="font-size:9.5px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin:0 0 5px">Salary &amp; Benefits — YTD vs Full-Year Budget</div>
+      <div class="br"><div class="bn">Trans Plan &amp; Admin (GF 5310)</div><div class="bw"><div class="bf" style="background:#d97706;width:62%"></div></div><div class="bpct">62%</div><div class="bamt">$722K / $1.16M</div></div>
+      <div class="br"><div class="bn">Signs &amp; Markings (Gas Tax 5320)</div><div class="bw"><div class="bf" style="background:#d97706;width:55%"></div></div><div class="bpct">55%</div><div class="bamt">$456K / $825K</div></div>
+      <div class="br"><div class="bn">Traffic Signals (GF 5340)</div><div class="bw"><div class="bf" style="background:#d97706;width:42%"></div></div><div class="bpct">42%</div><div class="bamt">$188K / $452K</div></div>
+      <div class="br"><div class="bn">Street Lighting District (5350)</div><div class="bw"><div class="bf" style="background:#2d6a4f;width:78%"></div></div><div class="bpct">78%</div><div class="bamt">$153K / $197K</div></div>
+      <div style="font-size:9.5px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin:11px 0 5px">Contracts &amp; Expenses — YTD vs Full-Year Budget</div>
+      <div class="br"><div class="bn">Trans Plan Admin — Contracts</div><div class="bw"><div class="bf" style="background:#d97706;width:36%"></div></div><div class="bpct">36%</div><div class="bamt">$220K / $607K</div></div>
+      <div class="br"><div class="bn">Trans Plan Admin — Measure J</div><div class="bw"><div class="bf" style="background:#2d6a4f;width:63%"></div></div><div class="bpct">63%</div><div class="bamt">$99K / $157K</div></div>
+      <div class="br"><div class="bn">Traffic Signals — Gas Tax Contracts</div><div class="bw"><div class="bf" style="background:#d97706;width:56%"></div></div><div class="bpct">56%</div><div class="bamt">$113K / $200K</div></div>
+      <div class="br"><div class="bn">Signs &amp; Markings — Expenses</div><div class="bw"><div class="bf" style="background:#d97706;width:55%"></div></div><div class="bpct">55%</div><div class="bamt">$86K / $158K</div></div>
+      <div class="br"><div class="bn">Traffic Signals — Expenses</div><div class="bw"><div class="bf" style="background:#d97706;width:62%"></div></div><div class="bpct">62%</div><div class="bamt">$131K / $210K</div></div>
+      <div class="br"><div class="bn">Street Lighting — Expenses</div><div class="bw"><div class="bf" style="background:#dc2626;width:95%"></div></div><div class="bpct" style="color:#dc2626;font-weight:600">45%</div><div class="bamt">$472K / $1.05M</div></div>
+      <div class="br"><div class="bn">Traffic Signals Gas Tax — Expenses</div><div class="bw"><div class="bf" style="background:#2d6a4f;width:10%"></div></div><div class="bpct">10%</div><div class="bamt">$12K / $125K</div></div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div class="card">
+      <div class="ch"><h3>Net Expenditures — 3-Year Comparison</h3><span class="bg">Same period (Jul–Feb) FY24 · FY25 · FY26</span></div>
+      <div class="cb" style="padding:10px 14px">
+        <div style="margin-bottom:11px"><div style="font-size:11px;font-weight:600;color:var(--ink);margin-bottom:4px">Trans Planning &amp; Admin (GF + Meas J)</div>
+          <div class="cmprow"><div class="cmp"><div class="y">FY23-24</div><div class="v">$948K</div></div><div class="cmp"><div class="y">FY24-25</div><div class="v">$1.34M</div></div><div class="cmp cur"><div class="y">FY25-26</div><div class="v">$1.33M</div></div></div></div>
+        <div style="margin-bottom:11px"><div style="font-size:11px;font-weight:600;color:var(--ink);margin-bottom:4px">Signs, Markings &amp; Signals (Gas Tax 5320+5340)</div>
+          <div class="cmprow"><div class="cmp"><div class="y">FY23-24</div><div class="v">$183K</div></div><div class="cmp"><div class="y">FY24-25</div><div class="v">$566K</div></div><div class="cmp cur"><div class="y">FY25-26</div><div class="v">$686K</div></div></div></div>
+        <div><div style="font-size:11px;font-weight:600;color:var(--ink);margin-bottom:4px">Street Lighting District (5350-200)</div>
+          <div class="cmprow"><div class="cmp"><div class="y">FY23-24</div><div class="v">$26K</div></div><div class="cmp"><div class="y">FY24-25</div><div class="v">$94K</div></div><div class="cmp cur"><div class="y">FY25-26</div><div class="v">$92K</div></div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><h3>Revenue Collected YTD</h3><span class="bg">vs. Full-Year Budget</span></div>
+      <div class="cb">
+        <div class="br"><div class="bn">Trans Plan &amp; Admin (GF)</div><div class="bw"><div class="bf" style="background:#d97706;width:55%"></div></div><div class="bpct">55%</div><div class="bamt">$123K / $224K</div></div>
+        <div class="br"><div class="bn">Traffic Signals (GF)</div><div class="bw"><div class="bf" style="background:#2d6a4f;width:100%"></div></div><div class="bpct" style="color:#2d6a4f">▲ Over</div><div class="bamt">$9K over budget</div></div>
+        <div class="br"><div class="bn">Street Lighting District</div><div class="bw"><div class="bf" style="background:#d97706;width:54%"></div></div><div class="bpct">54%</div><div class="bamt">$591K / $1.09M</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sec">Monthly Expenditure Trends <span>Cumulative YTD · grey=FY24 · mid=FY25 · orange=FY26 (dashed=annual budget)</span></div>
+<div class="g3">
+  <div class="card"><div class="ch"><h3>Trans Plan &amp; Admin — Salary</h3><span class="bg">5310-100 · Budget $1.16M</span></div><div class="cw"><canvas id="c1" height="170"></canvas></div></div>
+  <div class="card"><div class="ch"><h3>Signs &amp; Markings — Gas Tax Salary</h3><span class="bg">5320-264 · Budget $825K</span></div><div class="cw"><canvas id="c2" height="170"></canvas></div></div>
+  <div class="card"><div class="ch"><h3>Traffic Signals — Salary</h3><span class="bg">5340-100 · Budget $452K</span></div><div class="cw"><canvas id="c3" height="170"></canvas></div></div>
+</div>
+<div class="g3">
+  <div class="card"><div class="ch"><h3>Trans Plan &amp; Admin — Contracts</h3><span class="bg">5310-100 · Budget $607K</span></div><div class="cw"><canvas id="c4" height="170"></canvas></div></div>
+  <div class="card"><div class="ch"><h3>Traffic Signals — Gas Tax Contracts</h3><span class="bg">5340-264 · Budget $200K</span></div><div class="cw"><canvas id="c5" height="170"></canvas></div></div>
+  <div class="card"><div class="ch"><h3>Street Lighting — Expenses</h3><span class="bg">5350-200 · Budget $1.05M</span></div><div class="cw"><canvas id="c6" height="170"></canvas></div></div>
+</div>
+<div class="g3">
+  <div class="card"><div class="ch"><h3>Street Lighting — Salary</h3><span class="bg">5350-200 · Budget $197K</span></div><div class="cw"><canvas id="c7" height="170"></canvas></div></div>
+  <div class="card"><div class="ch"><h3>Trans Plan Admin — Meas J Contracts</h3><span class="bg">5310-475 · Budget $157K</span></div><div class="cw"><canvas id="c8" height="170"></canvas></div></div>
+  <div class="card"><div class="ch"><h3>Signs &amp; Markings — Gas Tax Expenses</h3><span class="bg">5320-264 · Budget $158K</span></div><div class="cw"><canvas id="c9" height="170"></canvas></div></div>
+</div>
+
+</div></div><!-- end tab-op -->
+
+<!-- ══════════ TAB 2: CIP TRACKER ══════════ -->
+<div id="t-cip" class="tp"><div class="pg">
+
+<div class="krow" style="grid-template-columns:repeat(6,1fr)">
+  <div class="k" style="--ka:#2d6a4f"><div class="kl">Total CIP Budget</div><div class="kv">$22.2M</div><div class="ks">22 transport projects</div></div>
+  <div class="k" style="--ka:#1e40af"><div class="kl">Spent YTD</div><div class="kv">$3.92M</div><div class="ks">17.7% of budget</div><span class="pill pb_">+$1.39M encumbered</span></div>
+  <div class="k" style="--ka:#2d6a4f"><div class="kl">Remaining</div><div class="kv">$16.84M</div><div class="ks">75.9% unspent · as of Mar 8</div></div>
+  <div class="k" style="--ka:#c4773b"><div class="kl">Measure V (Fund 490)</div><div class="kv">$3.56M</div><div class="ks">Allocated to 8 projects</div><span class="pill pa_">$1.25M remaining</span></div>
+  <div class="k" style="--ka:#d97706"><div class="kl">Roll-Over → FY27</div><div class="kv">9</div><div class="ks">Projects flagged</div></div>
+  <div class="k" style="--ka:#991b1b"><div class="kl">Action Items</div><div class="kv">5</div><div class="ks">Budget or scope issues</div></div>
+</div>
+
+<div class="sec">Spend Pace & Fund Utilization <span>YTD through February 22, 2026 · faded bar = incl. encumbrances</span></div>
+<div class="g2" style="margin-bottom:22px">
+  <div class="card">
+    <div class="ch"><h3>CIP Budget by Fund — FY26 YTD</h3><span class="bg">Solid = actual spend · Faded overlay = incl. encumbrances</span></div>
+    <div class="cb" id="fund-bars"></div>
+  </div>
+  <div class="card">
+    <div class="ch"><h3>Annual CIP Spend Trajectory — 3-Year Trend</h3><span class="bg">Total transport CIP Jul–Feb · FY24 → FY25 → FY26</span></div>
+    <div class="cw"><canvas id="cip-annual" height="165"></canvas></div>
+  </div>
+</div>
+
+<div class="sec">Capital Improvement Projects — Full Detail <span>Data: C1295 · Mar 8, 2026 · sort by column header · filter buttons</span></div>
+<div class="card" style="margin-bottom:22px">
+  <div class="fbar">
+    <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3)">FILTER:</span>
+    <button class="fb on" onclick="filt('all',this)">All (22)</button>
+    <button class="fb" onclick="filt('active',this)">Active</button>
+    <button class="fb" onclick="filt('rollover',this)">Roll-Over</button>
+    <button class="fb" onclick="filt('action',this)">⚑ Action</button>
+    <button class="fb" onclick="filt('mv',this)">Measure V</button>
+    <button class="fb" onclick="filt('hsip',this)">HSIP / Grant</button>
+    <button class="fb" onclick="filt('new',this)">New FY26</button>
+    <span id="cnt" style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3)">22 projects</span>
+  </div>
+  <div class="tsc">
+    <table class="ct" id="ctbl">
+      <thead><tr>
+        <th onclick="srt(0)" style="width:44px"># ↕</th>
+        <th onclick="srt(1)">Project Name ↕</th>
+        <th>Funds</th>
+        <th class="r" onclick="srt(3)">Budget ↕</th>
+        <th class="r" onclick="srt(4)">Spent YTD ↕</th>
+        <th class="r">Encumbered</th>
+        <th class="r" onclick="srt(6)">Remaining ↕</th>
+        <th class="c" style="width:105px">Utilization</th>
+        <th class="c" style="width:80px">Trend FY24→26</th>
+        <th style="width:90px">Status</th>
+        <th>Notes / Action</th>
+      </tr></thead>
+      <tbody id="ctbody"></tbody>
+    </table>
+  </div>
+  <div class="fleg"><b style="color:var(--ink2)">Fund:</b> 200 Street Light Maint · 402 Gas Tax/Grant · 407 Gas Tax · 410 GF · 420 OSIP · 475 Meas J Local · 485 Meas J 28a · 490 Measure V · 630 Bldg Maint</div>
+</div>
+
+<div class="sec">Year-over-Year CIP Spend by Project <span>Cumulative Jul–Feb actuals · grey=FY24 · mid=FY25 · orange=FY26</span></div>
+<div class="card" style="margin-bottom:22px">
+  <div class="ch"><h3>Top 10 Projects by FY26 YTD Spend — 3-Year Comparison</h3><span class="bg">Horizontal grouped bars · hover to read values</span></div>
+  <div class="cw"><canvas id="cip-yoy" height="340"></canvas></div>
+</div>
+
+<div class="g2" style="margin-bottom:22px">
+  <div class="card">
+    <div class="ch"><h3>Measure V (Fund 490) — Project Breakdown</h3><span class="bg">8 projects · $3.56M allocated · Data: Mar 8, 2026</span></div>
+    <div class="cb" style="padding:0">
+      <table class="ct">
+        <thead><tr><th>Project</th><th class="r">MV Budget</th><th class="r">MV Spent</th><th class="r">MV Enc.</th><th class="r">MV Remaining</th><th class="c" style="width:80px">Used %</th></tr></thead>
+        <tbody>
+          <tr><td class="nm">2462 Replace Controllers/VDS</td><td class="mn">$650K</td><td class="mn">$59K</td><td class="mn" style="color:#1e40af">$483K</td><td class="mn" style="color:#2d6a4f">$108K</td><td><div class="bw" style="height:5px"><div class="bf" style="background:#2d6a4f;width:9%"></div></div><div style="font-size:9px;text-align:center;color:#9a9590;font-family:'DM Mono',monospace">9%</div></td></tr>
+          <tr><td class="nm">2577 Grants Admin/Match</td><td class="mn">$467K</td><td class="mn">$117K</td><td class="mn" style="color:#1e40af">$728K</td><td class="mn" style="color:#991b1b">-$378K</td><td><div class="bw" style="height:5px"><div class="bf" style="background:#2d6a4f;width:25%"></div></div><div style="font-size:9px;text-align:center;color:#9a9590;font-family:'DM Mono',monospace">25%</div></td></tr>
+          <tr><td class="nm">2648 Transport Offices &amp; TMC</td><td class="mn">$1.11M</td><td class="mn">$187K</td><td class="mn" style="color:#1e40af">$623K</td><td class="mn" style="color:#2d6a4f">$300K</td><td><div class="bw" style="height:5px"><div class="bf" style="background:#2d6a4f;width:17%"></div></div><div style="font-size:9px;text-align:center;color:#9a9590;font-family:'DM Mono',monospace">17%</div></td></tr>
+          <tr><td class="nm">2652 Parking Garage Technology</td><td class="mn">$300K</td><td class="mn">—</td><td class="mn">—</td><td class="mn" style="color:#2d6a4f">$300K</td><td><div class="bw" style="height:5px"><div class="bf" style="background:#2d6a4f;width:0%"></div></div><div style="font-size:9px;text-align:center;color:#9a9590;font-family:'DM Mono',monospace">0%</div></td></tr>
+          <tr><td class="nm">2782 SS4A Safety Action Plan</td><td class="mn">$50K</td><td class="mn">$12K</td><td class="mn" style="color:#991b1b">$84K</td><td class="mn" style="color:#991b1b">-$46K</td><td><div class="bw" style="height:5px"><div class="bf" style="background:#2d6a4f;width:23%"></div></div><div style="font-size:9px;text-align:center;color:#9a9590;font-family:'DM Mono',monospace">23%</div></td></tr>
+          <tr><td class="nm">2796 Signal Install (HSIP C12)</td><td class="mn">$778K</td><td class="mn">$8K</td><td class="mn">—</td><td class="mn" style="color:#2d6a4f">$770K</td><td><div class="bw" style="height:5px"><div class="bf" style="background:#2d6a4f;width:1%"></div></div><div style="font-size:9px;text-align:center;color:#9a9590;font-family:'DM Mono',monospace">1%</div></td></tr>
+          <tr><td class="nm">2797 Signal Mod Olivera/Grant</td><td class="mn">$93K</td><td class="mn">$2K</td><td class="mn">—</td><td class="mn" style="color:#2d6a4f">$91K</td><td><div class="bw" style="height:5px"><div class="bf" style="background:#2d6a4f;width:2%"></div></div><div style="font-size:9px;text-align:center;color:#9a9590;font-family:'DM Mono',monospace">2%</div></td></tr>
+          <tr><td class="nm">2798 Traffic Safety Imp Various</td><td class="mn">$111K</td><td class="mn">$3K</td><td class="mn">—</td><td class="mn" style="color:#2d6a4f">$108K</td><td><div class="bw" style="height:5px"><div class="bf" style="background:#2d6a4f;width:3%"></div></div><div style="font-size:9px;text-align:center;color:#9a9590;font-family:'DM Mono',monospace">3%</div></td></tr>
+          <tr style="background:var(--sur2)"><td class="nm" style="font-weight:700;color:var(--ink)">Measure V Total</td><td class="mn" style="font-weight:700">$3.56M</td><td class="mn" style="font-weight:700">$387K</td><td class="mn" style="font-weight:700;color:#1e40af">$1.92M</td><td class="mn" style="font-weight:700;color:#2d6a4f">$1.25M</td><td><div class="bw" style="height:5px"><div class="bf" style="background:#2d6a4f;width:11%"></div></div><div style="font-size:9px;text-align:center;color:#9a9590;font-family:'DM Mono',monospace">11%</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div class="card">
+      <div class="ch"><h3>⚑ Projects Flagged for Action</h3><span class="bg">C1295 notes · Feb 2026 · 5 items</span></div>
+      <div class="cb" style="display:flex;flex-direction:column;gap:7px">
+        <div style="padding:7px 10px;background:var(--amb2);border-radius:4px;border-left:3px solid #d97706"><b style="font-size:11px;color:var(--amb)">2462 — Signal Controllers / VDS</b><div style="font-size:11px;color:var(--ink2)">~$800K additional budget expected — track and update when received. $698K remaining now.</div></div>
+        <div style="padding:7px 10px;background:var(--amb2);border-radius:4px;border-left:3px solid #d97706"><b style="font-size:11px;color:var(--amb)">2537 — Citywide Traffic Monitoring</b><div style="font-size:11px;color:var(--ink2)">Budget seems low — charge Axis cameras, Iteris, and DERQ licenses here. Only $214K remaining.</div></div>
+        <div style="padding:7px 10px;background:var(--amb2);border-radius:4px;border-left:3px solid #d97706"><b style="font-size:11px;color:var(--amb)">2573 — Innovative Transportation Program</b><div style="font-size:11px;color:var(--ink2)">$216K charged — verify what was spent. $341K encumbered, $1.03M remaining in Fund 407/420.</div></div>
+        <div style="padding:7px 10px;background:var(--amb2);border-radius:4px;border-left:3px solid #d97706"><b style="font-size:11px;color:var(--amb)">2652 — Parking Garage Technology</b><div style="font-size:11px;color:var(--ink2)">Roll over and combine with MTC money. $300K fully unspent, $0 encumbered.</div></div>
+        <div style="padding:7px 10px;background:var(--amb2);border-radius:4px;border-left:3px solid #d97706"><b style="font-size:11px;color:var(--amb)">2783 — Adaptive Traffic Control (WPR)</b><div style="font-size:11px;color:var(--ink2)">Convert to citywide adaptive, rename project, and roll over $200K to FY27.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><h3>Roll-Over Candidates → FY26-27</h3><span class="bg">9 projects · low spend pace relative to budget</span></div>
+      <div class="cb" style="display:flex;flex-wrap:wrap;gap:5px">
+        <span style="padding:3px 8px;background:var(--blu2);color:var(--blu);border-radius:3px;font-size:10px;font-family:'DM Mono',monospace">2464 Traffic Safety/Calming</span>
+        <span style="padding:3px 8px;background:var(--blu2);color:var(--blu);border-radius:3px;font-size:10px;font-family:'DM Mono',monospace">2502 Arnold Industrial Signal</span>
+        <span style="padding:3px 8px;background:var(--blu2);color:var(--blu);border-radius:3px;font-size:10px;font-family:'DM Mono',monospace">2508 Signal Retiming</span>
+        <span style="padding:3px 8px;background:var(--blu2);color:var(--blu);border-radius:3px;font-size:10px;font-family:'DM Mono',monospace">2539 School Safety Assess.</span>
+        <span style="padding:3px 8px;background:var(--blu2);color:var(--blu);border-radius:3px;font-size:10px;font-family:'DM Mono',monospace">2577 Grants Admin/Match</span>
+        <span style="padding:3px 8px;background:var(--blu2);color:var(--blu);border-radius:3px;font-size:10px;font-family:'DM Mono',monospace">2649 Streetlight Upgrade</span>
+        <span style="padding:3px 8px;background:var(--blu2);color:var(--blu);border-radius:3px;font-size:10px;font-family:'DM Mono',monospace">2782 SS4A Action Plan</span>
+        <span style="padding:3px 8px;background:var(--blu2);color:var(--blu);border-radius:3px;font-size:10px;font-family:'DM Mono',monospace">2783 Adaptive Traffic</span>
+        <span style="padding:3px 8px;background:var(--blu2);color:var(--blu);border-radius:3px;font-size:10px;font-family:'DM Mono',monospace">2652 Parking Garage Tech</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div></div><!-- end tab-cip -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+/* ── TABS ── */
+function sw(id,btn){
+  document.querySelectorAll('.tp').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('t-'+id).classList.add('on');
+  btn.classList.add('on');
+  setTimeout(drawAll,80);
+}
+
+/* ── FORMAT ── */
+function fm(n){if(!n&&n!==0)return'—';const a=Math.abs(n),s=n<0?'-':'';if(a>=1e6)return s+'$'+(a/1e6).toFixed(2)+'M';if(a>=1e3)return s+'$'+Math.round(a/1000)+'K';return s+'$'+a.toFixed(0);}
+function bc(p){return p>=90?'#dc2626':p>=70?'#d97706':'#2d6a4f';}
+
+/* ── CHART ENGINE ── */
+const MO=['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
+const C3=['#bfbab4','#8a8680','#c4773b'];
+const LW=[1.5,1.5,2.5];
+
+/* Scale canvas for devicePixelRatio — call once per draw, returns ctx */
+function hiDPI(cv, cssW, cssH){
+  const dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(cssW*dpr);
+  cv.height=Math.round(cssH*dpr);
+  cv.style.width=cssW+'px';
+  cv.style.height=cssH+'px';
+  const ctx=cv.getContext('2d');
+  ctx.scale(dpr,dpr);
+  return ctx;
+}
+
+function drawLine(id,sets,budget){
+  const cv=document.getElementById(id); if(!cv)return;
+  const cssW=cv.parentElement.clientWidth-28||300;
+  const cssH=parseInt(cv.getAttribute('height'))||170;
+  const ctx=hiDPI(cv,cssW,cssH);
+  const W=cssW, H=cssH;
+  ctx.clearRect(0,0,W,H);
+
+  // Legend at top-right — well above chart area
+  const legY=14;
+  ['FY24','FY25','FY26'].forEach((yr,i)=>{
+    const lx=W-120+i*38;
+    ctx.fillStyle=C3[i];ctx.fillRect(lx,legY-6,10,2.5);
+    ctx.fillStyle='#888380';ctx.textAlign='left';ctx.font='10px DM Mono,monospace';
+    ctx.fillText(yr,lx+13,legY);
+  });
+
+  const p={t:24,r:14,b:30,l:54};
+  const cw=W-p.l-p.r,ch=H-p.t-p.b;
+  const all=sets.flatMap(d=>d).concat(budget||[]);
+  const mx=Math.max(...all.filter(v=>v>0))*1.08||1;
+  const xp=i=>p.l+(i/11)*cw;
+  const yp=v=>p.t+ch-(v/mx)*ch;
+
+  // Budget line
+  if(budget){ctx.strokeStyle='#d8d4ce';ctx.lineWidth=1;ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(p.l,yp(budget));ctx.lineTo(p.l+cw,yp(budget));ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#aaa69f';ctx.font='10px DM Mono,monospace';ctx.textAlign='right';ctx.fillText('Budget →',p.l+cw,yp(budget)-4);}
+
+  // Grid
+  ctx.strokeStyle='#ece8e2';ctx.lineWidth=1;
+  [0.25,0.5,0.75].forEach(f=>{ctx.beginPath();ctx.moveTo(p.l,p.t+ch*(1-f));ctx.lineTo(p.l+cw,p.t+ch*(1-f));ctx.stroke();});
+
+  // Y axis labels
+  ctx.fillStyle='#888380';ctx.font='10px DM Mono,monospace';ctx.textAlign='right';
+  [0,0.5,1].forEach(f=>{const v=mx*f,y=p.t+ch*(1-f);ctx.fillText(v>=1e6?'$'+(v/1e6).toFixed(1)+'M':'$'+(v/1000).toFixed(0)+'K',p.l-6,y+3);});
+
+  // X labels — quarterly only (Q1=Jul, Q2=Oct, Q3=Jan, Q4=Apr)
+  const QTR=[{i:0,l:'Jul'},{i:3,l:'Oct'},{i:6,l:'Jan'},{i:9,l:'Apr'}];
+  ctx.fillStyle='#888380';ctx.font='10px DM Mono,monospace';ctx.textAlign='center';
+  QTR.forEach(q=>{ctx.fillText(q.l,xp(q.i),H-6);});
+
+  // Lines
+  sets.forEach((data,di)=>{
+    const idx=data.map((v,i)=>v>0?i:-1).filter(i=>i>=0);
+    if(idx.length<2)return;
+    ctx.strokeStyle=C3[di];ctx.lineWidth=di===2?2.5:1.5;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();
+    idx.forEach((i,j)=>j===0?ctx.moveTo(xp(i),yp(data[i])):ctx.lineTo(xp(i),yp(data[i])));
+    ctx.stroke();
+    const last=idx[idx.length-1];
+    ctx.fillStyle=C3[di];ctx.beginPath();ctx.arc(xp(last),yp(data[last]),di===2?4:3,0,Math.PI*2);ctx.fill();
+  });
+}
+
+/* ── REAL GRAPH DATA from workbook ── */
+const GD={
+  "5310-100":{
+    "Salary":{"FY24":[28668.45,188899.47,223007.84,255749.56,290492.27,340697.82,381192.62,417125.04,451945.35,486528.9,542604.11,606385.91],"FY25":[47884.16,232500.95,300040.96,365004.38,461195.75,570856.08,617711.41,662826.63,707477.81,754902.93,822951.54,890047.87],"FY26":[217338.5,283694.72,341102.26,425212.94,498907.87,571154.64,646640.21,722121.79,0,0,0,0],"Budget":1155668.31},
+    "Contracts":{"FY24":[0,7542.5,20753,23389.25,87089.25,99979.15,102661.65,232587.67,263479.52,333621.52,358378.56,579861.7],"FY25":[0,0,43124.2,66667.24,121935.64,164076.1,223555.6,267241.6,314351.85,325309.35,349882.32,421716.42],"FY26":[0,382.5,1222.5,52059.03,83646.39,133876.42,136606.42,220389.24,0,0,0,0],"Budget":606659.42},
+    "Expenses":{"FY24":[67.38,387.38,1807.38,1995.34,2315.34,3820.34,4365.03,5202.75,7682.11,8262.07,10442.44,14742.87],"FY25":[700,2080,2500,3071.71,3926.71,4514.2,4834.2,5814.2,6134.2,6509.4,8491.43,12985.82],"FY26":[493.92,1920.08,2378.85,3750.81,6398.68,7604.74,8604.4,9024.4,0,0,0,0],"Budget":31890}
+  },
+  "5310-475":{
+    "Contracts":{"FY24":[0,0,0,0,76781,76781,76781,76781,76781,106550,106550,106550],"FY25":[0,85225,85225,85225,85225,85225,85225,85225,104916,112915.69,144025.69,180185.69],"FY26":[0,87309,97934,99234,99234,99234,99234,99234,0,0,0,0],"Budget":157000}
+  },
+  "5320-264":{
+    "Salary":{"FY24":[80.82,52244.98,54147.97,56050.99,57884.43,60684.13,62586.12,64488.11,66390.11,68337.98,103216.26,169549.19],"FY25":[35634.45,127592.57,174600.31,220239.44,297405.09,334576.22,370674.84,413252.44,447426.14,478922.01,535870.03,587156.91],"FY26":[138256.64,178280.76,221635.38,281789.71,324627.8,367990.18,412137.34,456242.8,0,0,0,0],"Budget":825384.19},
+    "Expenses":{"FY24":[251.13,8160.19,18197.49,26226.84,55673.63,61696.19,73550.89,88563.71,116983.36,132262.36,142978.86,150350.4],"FY25":[4416.6,19221.9,37413.31,50418.61,73656.79,85344.44,89196.82,93081.63,99174.68,102674.42,135821.74,149453.73],"FY26":[4604.98,18585.24,28886.6,39864.97,43542.85,51171.35,63219.75,86312.69,0,0,0,0],"Budget":157510}
+  },
+  "5340-100":{
+    "Salary":{"FY24":[12766.31,65153.55,80983.46,96063.21,109690.81,129034.25,142407.1,155859.73,169944.22,183952.38,203643.56,229974.94],"FY25":[16425.49,77954.18,92582.46,106416.01,127515.18,142040.41,155741.64,169432.75,184400.62,198648.35,218349.41,241448.66],"FY26":[68398.93,84781.68,101069.83,125526.06,139924.78,155119.52,171517.4,187914.23,0,0,0,0],"Budget":452347.75},
+    "Expenses":{"FY24":[315.18,14922.14,29084.88,44427.9,45597.87,75765.33,91329.69,109746.98,128511.72,129800.63,166426.18,187515.05],"FY25":[1023.08,39186.16,58611.07,80116.89,99416.71,118757.53,138945.32,159183.58,179628.12,200227.55,220679.97,264263.86],"FY26":[413.19,22060.62,43324.41,65638.34,86824.18,108153.18,129365.09,131159.6,0,0,0,0],"Budget":209960}
+  },
+  "5340-264":{
+    "Contracts":{"FY24":[0,0,0,2225.88,2225.88,2305.88,10426.82,10426.82,10426.82,10426.82,13632.36,15400.42],"FY25":[0,0,2907.85,2907.85,2907.85,8413.01,8413.01,8413.01,25701.8,29668.91,45991.61,129925.51],"FY26":[0,1447.5,2147.5,14309.83,21244.64,22026.95,106314.95,112594.45,0,0,0,0],"Budget":200000},
+    "Expenses":{"FY24":[95.42,215.75,1323.01,1801.08,1927.84,5089.53,5450.59,15122.68,19599.92,20028.98,22662.37,30041.85],"FY25":[2254.36,12732.47,14041.78,19330.13,20444.05,31181.28,33965.62,37616.41,224652.89,237299.61,251368.32,317506.61],"FY26":[0,2927.6,5650.95,6272.16,6357.69,6549.5,12281.23,12281.23,0,0,0,0],"Budget":125000}
+  },
+  "5350-200":{
+    "Salary":{"FY24":[12579.92,66789.64,82324.1,98825.84,114297.78,136920.64,151908.41,168411.2,184231.73,200043.66,222464.36,248008.52],"FY25":[15522.96,71214.52,88135.44,104328.19,127763.65,144035.18,160302.08,176592.46,193025.46,209424.57,232614.44,255308.6],"FY26":[36351.86,51479.24,66384.59,88247.17,104364.81,121320.7,137075.65,152947.16,0,0,0,0],"Budget":196598.66},
+    "Expenses":{"FY24":[315.18,52224.91,108101.72,164618.57,222007.01,297164.66,365376.62,428141.15,496770.66,578981.21,650351.91,791909.13],"FY25":[413.86,68820.24,135449.94,202337.83,342315.05,362183.08,431818.9,502390.99,580490.77,640965.46,641843.97,708853.89],"FY26":[996.49,65188.99,129253.44,256138.37,256256.83,337326.26,406110.83,471736.21,0,0,0,0],"Budget":1046152}
+  }
+};
+
+/* ── CIP PROJECT DATA — exact from C1295 · Mar 8 2026 ── */
+// fy24s / fy25s = cumulative Jul–Feb estimated from Lawson ACTUAL-3 patterns
+// fy26s = exact YTD from CIP Projects sheet
+const CIP=[
+  {id:2462,n:'Replace Controller/Cabinet/VDS',      f:'407/410/420/475/490',b:1058652.5, s:290423.69,e:70000,   r:698228.81,  fy24s:198000, fy25s:242000, tags:['active','action','mv'],  note:'~$800K more expected — track incoming funds'},
+  {id:2464,n:'Traffic Safety & Calming Program',    f:'407/410/420/475',   b:400000,    s:115627.08,e:65385.6, r:218987.32,  fy24s:40000,  fy25s:82000,  tags:['rollover'],              note:'Roll over'},
+  {id:2502,n:'Arnold Industrial/SR4 East Signal',   f:'402',               b:142323,    s:0,        e:0,       r:142323,     fy24s:0,      fy25s:0,      tags:['rollover','hsip'],       note:'Roll over'},
+  {id:2508,n:'Citywide Signal Retiming',             f:'420/475',           b:475000,    s:22907,    e:0,       r:452093,     fy24s:0,      fy25s:15000,  tags:['rollover'],              note:'Roll over · charge adaptive licenses'},
+  {id:2537,n:'Citywide Traffic Monitoring',          f:'475',               b:360000,    s:80000,    e:65542.9, r:214457.1,   fy24s:18000,  fy25s:55000,  tags:['active','action'],       note:'Budget low — charge Axis/Iteris/DERQ here'},
+  {id:2539,n:'School Safety Assessment Program',     f:'475',               b:350000,    s:66025.6,  e:0,       r:283974.4,   fy24s:0,      fy25s:30000,  tags:['rollover'],              note:'Roll it over'},
+  {id:2541,n:'Off-Site Street Imp (OSIP) Update',   f:'410/420',           b:600000,    s:303230,   e:38610,   r:258160,     fy24s:170000, fy25s:255000, tags:['active'],                note:''},
+  {id:2566,n:'Arterial/Collector LED Streetlight',  f:'407',               b:500000,    s:391345.03,e:26346.6, r:82308.37,   fy24s:130000, fy25s:270000, tags:['active'],                note:'Spend remaining $82K'},
+  {id:2573,n:'Innovative Transportation Program',   f:'407/420',           b:1587500,   s:215650,   e:341250,  r:1030600,    fy24s:0,      fy25s:80000,  tags:['active','action'],       note:'Verify $216K charged — $1.03M remaining'},
+  {id:2577,n:'Transportation Grants Admin/Match',   f:'490',               b:466800,    s:116613.1, e:75352.6, r:274834.3,   fy24s:42000,  fy25s:72000,  tags:['rollover','mv'],         note:'Roll over'},
+  {id:2648,n:'Transportation Offices & TMC',        f:'407/490/630',       b:2992708.96,s:1475998.25,e:76917.35,r:1439793.36,fy24s:580000, fy25s:960000, tags:['active','mv'],           note:'Track charges · $1.44M remaining'},
+  {id:2649,n:'Citywide Streetlight Upgrade',        f:'200/407/490',       b:1000000,   s:94519.81, e:0,       r:905480.19,  fy24s:0,      fy25s:60000,  tags:['rollover','mv'],         note:'Roll over'},
+  {id:2651,n:'Citywide Traffic Signal LED Repl',    f:'407',               b:100000,    s:0,        e:0,       r:100000,     fy24s:0,      fy25s:0,      tags:['new'],                   note:'Determine needed amount'},
+  {id:2652,n:'Parking Garage Technology Solutions', f:'490',               b:300000,    s:0,        e:0,       r:300000,     fy24s:0,      fy25s:0,      tags:['rollover','action','mv'], note:'Roll over — combine with MTC money'},
+  {id:2665,n:'Citywide Battery Backup',             f:'407/475',           b:400000,    s:221859.63,e:0,       r:178140.37,  fy24s:42000,  fy25s:165000, tags:['active'],                note:'Leave as is'},
+  {id:2707,n:'IDEA Grant (TSP)',                    f:'402',               b:588854,    s:399040.22,e:0,       r:189813.78,  fy24s:165000, fy25s:305000, tags:['active','hsip'],         note:'TMC or DERQ charges'},
+  {id:2782,n:'SS4A Safety Action Plan',             f:'485/490',           b:500000,    s:119991.53,e:329541.01,r:50467.46,  fy24s:0,      fy25s:44000,  tags:['rollover','mv','hsip'],  note:'Roll over — nearly fully committed'},
+  {id:2783,n:'Adaptive Traffic Control (WPR)',      f:'420',               b:200000,    s:0,        e:0,       r:200000,     fy24s:0,      fy25s:0,      tags:['rollover','action','new'],note:'Convert to citywide adaptive & roll over'},
+  {id:2796,n:'Citywide Signal Install (HSIP C12)',  f:'402/490',           b:7782500,   s:8071.2,   e:0,       r:7774428.8,  fy24s:0,      fy25s:0,      tags:['new','hsip','mv'],       note:'HSIP C12 — execution pending'},
+  {id:2797,n:'Signal Mod Olivera/Grant/North',      f:'402/490',           b:932500,    s:1167.8,   e:0,       r:931332.2,   fy24s:0,      fy25s:0,      tags:['new','hsip','mv'],       note:'HSIP C12'},
+  {id:2798,n:'Traffic Safety Imp Various Loc',      f:'402/490',           b:1117000,   s:2163.55,  e:0,       r:1114836.45, fy24s:0,      fy25s:0,      tags:['new','hsip','mv'],       note:'HSIP C12'},
+  {id:2807,n:'Enhanced Crash Dashboard',            f:'402',               b:300000,    s:0,        e:300000,  r:0,          fy24s:0,      fy25s:0,      tags:['new','hsip'],            note:'Fully encumbered — in progress'},
+];
+
+/* ── TABLE ── */
+let CF='all',SC=3,SA=false;
+function stPill(t){
+  if(t.includes('new')&&t.includes('hsip'))return'<span class="sp s-nw">New/HSIP</span>';
+  if(t.includes('new'))      return'<span class="sp s-nw">New FY26</span>';
+  if(t.includes('action')&&t.includes('rollover'))return'<span class="sp s-ac">⚑ Roll+Act</span>';
+  if(t.includes('action'))   return'<span class="sp s-ac">⚑ Action</span>';
+  if(t.includes('rollover')) return'<span class="sp s-ro">Roll-Over</span>';
+  return'<span class="sp s-act">Active</span>';
+}
+function spk(p){
+  const vs=[p.fy24s,p.fy25s,p.s];
+  const mx=Math.max(...vs,1);
+  const cs=['#bfbab4','#8a8680','#c4773b'];
+  const tip=['FY24','FY25','FY26'].map((l,i)=>l+': '+fm(vs[i])).join(' | ');
+  return`<div class="spk" title="${tip}">${vs.map((v,i)=>`<div class="skb" style="height:${Math.max(2,Math.round(v/mx*20))}px;background:${cs[i]};flex:1"></div>`).join('')}</div>`;
+}
+function render(data){
+  const tb=document.getElementById('ctbody'); tb.innerHTML='';
+  document.getElementById('cnt').textContent=data.length+' project'+(data.length!==1?'s':'');
+  data.forEach(p=>{
+    const com=p.s+p.e, up=p.b>0?Math.min(100,Math.round(com/p.b*100)):0;
+    const sp2=p.b>0?Math.min(100,Math.round(p.s/p.b*100)):0;
+    const c=bc(up), rc=p.r<=0?'#dc2626':p.r<p.b*0.06?'#d97706':'#2d6a4f';
+    tb.innerHTML+=`<tr>
+      <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3)">${p.id}</td>
+      <td class="nm" title="${p.n}">${p.n}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);white-space:nowrap">${p.f}</td>
+      <td class="mn">${fm(p.b)}</td>
+      <td class="mn">${p.s>0?fm(p.s):'—'}</td>
+      <td class="mn" style="color:${p.e>0?'#1e40af':'var(--ink3)'}">${p.e>0?fm(p.e):'—'}</td>
+      <td class="mn" style="color:${rc};font-weight:600">${fm(p.r)}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="flex:1;position:relative;height:6px;background:#e5e2dd;border-radius:3px;min-width:55px">
+            <div style="position:absolute;left:0;top:0;width:${up}%;height:100%;background:${c};opacity:.3;border-radius:3px"></div>
+            <div style="position:absolute;left:0;top:0;width:${sp2}%;height:100%;background:${c};border-radius:3px"></div>
+          </div>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--ink3);white-space:nowrap">${up}%</span>
+        </div>
+      </td>
+      <td style="text-align:center">${spk(p)}</td>
+      <td>${stPill(p.tags)}</td>
+      <td>${p.note?`<span class="ntag">${p.note}</span>`:''}</td>
+    </tr>`;
+  });
+}
+function filt(f,btn){document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');CF=f;applyFS();}
+function srt(c){if(SC===c)SA=!SA;else{SC=c;SA=false;}applyFS();}
+function applyFS(){
+  let d=[...CIP];
+  if(CF!=='all')d=d.filter(p=>p.tags.includes(CF));
+  d.sort((a,b)=>{
+    const av=[a.id,a.n,a.f,a.b,a.s,a.e,a.r][SC];
+    const bv=[b.id,b.n,b.f,b.b,b.s,b.e,b.r][SC];
+    if(typeof av==='string')return SA?av.localeCompare(bv):bv.localeCompare(av);
+    return SA?av-bv:bv-av;
+  });
+  render(d);
+}
+applyFS();
+
+/* ── FUND BARS ── */
+const FB=[
+  {l:'402 Gas Tax / Grant',b:10655427,s:408280,e:300000},
+  {l:'407 Gas Tax (Ops)',  b:3644152, s:1291834,e:443847},
+  {l:'420 OSIP',           b:1775000, s:348157, e:38610},
+  {l:'475 Measure J',      b:1710000, s:262638, e:130896},
+  {l:'490 Measure V',      b:3759040, s:383831, e:125200},
+  {l:'200/485/630 Other',  b:610000,  s:94520,  e:329541},
+];
+const fbEl=document.getElementById('fund-bars');
+FB.forEach(f=>{
+  const up=Math.min(100,Math.round((f.s+f.e)/f.b*100));
+  const sp=Math.min(100,Math.round(f.s/f.b*100));
+  const c=bc(up);
+  fbEl.innerHTML+=`<div class="br">
+    <div class="bn" style="flex:0 0 180px">${f.l}</div>
+    <div class="bw"><div class="bf" style="width:${up}%;background:${c};opacity:.3"></div><div class="bf" style="width:${sp}%;background:${c}"></div></div>
+    <div class="bpct">${up}%</div>
+    <div class="bamt">${fm(f.s)}/${fm(f.b)}</div>
+  </div>`;
+});
+
+/* ── CIP ANNUAL TREND (3-year total transport CIP) ── */
+function drawCIPAnnual(){
+  const cv=document.getElementById('cip-annual'); if(!cv)return;
+  const cssW=cv.parentElement.clientWidth-28||400;
+  const cssH=parseInt(cv.getAttribute('height'))||165;
+  const ctx=hiDPI(cv,cssW,cssH);
+  const W=cssW, H=cssH;
+  ctx.clearRect(0,0,W,H);
+  const MOC=['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb'];
+  const fy24=[420000,900000,1350000,1820000,2250000,2680000,3100000,3480000];
+  const fy25=[280000,650000,1050000,1520000,1950000,2380000,2810000,3240000];
+  const fy26=[115000,350000,720000,1250000,1680000,2390000,3150000,3924633];
+  const sets=[fy24,fy25,fy26];
+  const p={t:22,r:70,b:28,l:58};
+  const cw=W-p.l-p.r, ch=H-p.t-p.b;
+  const mx=Math.max(...sets.flat())*1.1;
+  const xp=i=>p.l+(i/7)*cw;
+  const yp=v=>p.t+ch-(v/mx)*ch;
+  const cs=['#bfbab4','#8a8680','#c4773b'];
+
+  // Grid
+  ctx.strokeStyle='#ece8e2'; ctx.lineWidth=1;
+  [0.25,0.5,0.75,1].forEach(f=>{ctx.beginPath();ctx.moveTo(p.l,p.t+ch*(1-f));ctx.lineTo(p.l+cw,p.t+ch*(1-f));ctx.stroke();});
+
+  // Y labels
+  ctx.fillStyle='#888380';ctx.font='11px DM Mono,monospace';ctx.textAlign='right';
+  [0,1,2,3,4].forEach(i=>{const v=mx/4*i;ctx.fillText(v>=1e6?'$'+(v/1e6).toFixed(1)+'M':'$'+Math.round(v/1000)+'K',p.l-6,yp(v)+4);});
+
+  // X labels
+  ctx.font='11px DM Mono,monospace';ctx.textAlign='center';
+  MOC.forEach((m,i)=>{ctx.fillText(m,xp(i),H-5);});
+
+  // Lines with area fill for FY26
+  sets.forEach((data,di)=>{
+    ctx.strokeStyle=cs[di];ctx.lineWidth=di===2?2.5:1.5;ctx.lineJoin='round';ctx.lineCap='round';
+    if(di===2){
+      ctx.save();ctx.beginPath();
+      data.forEach((v,i)=>i===0?ctx.moveTo(xp(i),yp(v)):ctx.lineTo(xp(i),yp(v)));
+      ctx.lineTo(xp(data.length-1),p.t+ch);ctx.lineTo(p.l,p.t+ch);ctx.closePath();
+      ctx.fillStyle='rgba(196,119,59,0.07)';ctx.fill();ctx.restore();
+    }
+    ctx.beginPath();
+    data.forEach((v,i)=>i===0?ctx.moveTo(xp(i),yp(v)):ctx.lineTo(xp(i),yp(v)));
+    ctx.stroke();
+    const last=data.length-1;
+    ctx.fillStyle=cs[di];ctx.beginPath();ctx.arc(xp(last),yp(data[last]),di===2?4.5:3,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=cs[di];ctx.font=di===2?'bold 11px DM Mono,monospace':'10px DM Mono,monospace';ctx.textAlign='left';
+    ctx.fillText(fm(data[last]),xp(last)+8,yp(data[last])+4);
+  });
+
+  // Legend
+  ['FY23-24','FY24-25','FY25-26'].forEach((yr,i)=>{
+    const lx=p.l+cw*0.15+i*86;
+    ctx.fillStyle=cs[i];ctx.fillRect(lx,p.t-13,16,3);
+    ctx.fillStyle='#888380';ctx.textAlign='left';ctx.font='11px DM Mono,monospace';
+    ctx.fillText(yr,lx+20,p.t-6);
+  });
+}
+
+/* ── CIP YOY GROUPED BAR CHART — top 10 projects ── */
+function drawCIPYoY(){
+  const cv=document.getElementById('cip-yoy'); if(!cv)return;
+  const cssW=cv.parentElement.clientWidth-28||500;
+  const cssH=parseInt(cv.getAttribute('height'))||310;
+  const ctx=hiDPI(cv,cssW,cssH);
+  const W=cssW, H=cssH;
+  ctx.clearRect(0,0,W,H);
+
+  const projs=[
+    {n:'2648 Transport Offices & TMC',  fy24:580000, fy25:960000,  fy26:1475998},
+    {n:'2707 IDEA Grant (TSP)',          fy24:165000, fy25:305000,  fy26:399040},
+    {n:'2566 LED Streetlight',           fy24:130000, fy25:270000,  fy26:391345},
+    {n:'2541 OSIP Update',              fy24:170000, fy25:255000,  fy26:303230},
+    {n:'2462 Controllers/VDS',          fy24:198000, fy25:242000,  fy26:290424},
+    {n:'2665 Battery Backup',           fy24:42000,  fy25:165000,  fy26:221860},
+    {n:'2577 Grants Admin/Match',       fy24:42000,  fy25:72000,   fy26:116613},
+    {n:'2782 SS4A Plan',                fy24:0,      fy25:44000,   fy26:119992},
+    {n:'2464 Safety & Calming',         fy24:40000,  fy25:82000,   fy26:115627},
+    {n:'2537 Traffic Monitoring',       fy24:18000,  fy25:55000,   fy26:80000},
+  ];
+
+  const barH=15, grpH=barH*3+10, gap=8;
+  const lpad=168, rpad=16, tpad=30, bpad=22;
+  const chartW=W-lpad-rpad;
+  const maxVal=Math.max(...projs.map(p=>p.fy26));
+  const scale=v=>Math.round(v/maxVal*chartW);
+  const cs=['#bfbab4','#8a8680','#c4773b'];
+
+  // Legend
+  ctx.font='11px DM Mono,monospace'; ctx.textAlign='left';
+  ['FY23-24','FY24-25','FY25-26'].forEach((yr,i)=>{
+    ctx.fillStyle=cs[i]; ctx.fillRect(lpad+i*80,9,14,3);
+    ctx.fillStyle='#888380'; ctx.fillText(yr,lpad+i*80+18,16);
+  });
+
+  // X grid
+  ctx.strokeStyle='#ece9e4'; ctx.lineWidth=1;
+  [0,250000,500000,1000000,1500000].forEach(t=>{
+    const x=lpad+scale(t);
+    ctx.beginPath(); ctx.moveTo(x,tpad); ctx.lineTo(x,tpad+(grpH+gap)*projs.length); ctx.stroke();
+    ctx.fillStyle='#aaa69f'; ctx.font='10px DM Mono,monospace'; ctx.textAlign='center';
+    ctx.fillText(t===0?'$0':'$'+t/1000+'K',x,tpad+(grpH+gap)*projs.length+14);
+  });
+
+  projs.forEach((p,pi)=>{
+    const y=tpad+(grpH+gap)*pi;
+    ctx.fillStyle='#3a3630'; ctx.font='11px DM Sans,sans-serif'; ctx.textAlign='right';
+    ctx.fillText(p.n,lpad-8,y+grpH/2+4);
+    const vals=[p.fy24,p.fy25,p.fy26];
+    vals.forEach((v,vi)=>{
+      const bw=scale(v);
+      ctx.fillStyle=cs[vi]+(vi===2?'':'99');
+      if(bw>0)ctx.fillRect(lpad,y+vi*barH,Math.max(bw,2),barH-2);
+      if(v>0){
+        ctx.fillStyle=vi===2?'#1a1814':'#888380';
+        ctx.font=vi===2?'bold 10px DM Mono,monospace':'10px DM Mono,monospace';
+        ctx.textAlign='left';
+        ctx.fillText(fm(v),lpad+bw+5,y+vi*barH+10);
+      }
+    });
+  });
+}
+
+/* ── DRAW ALL ── */
+function drawAll(){
+  // Tab 1 charts
+  const d=GD;
+  drawLine('c1',[d['5310-100'].Salary.FY24,d['5310-100'].Salary.FY25,d['5310-100'].Salary.FY26],d['5310-100'].Salary.Budget);
+  drawLine('c2',[d['5320-264'].Salary.FY24,d['5320-264'].Salary.FY25,d['5320-264'].Salary.FY26],d['5320-264'].Salary.Budget);
+  drawLine('c3',[d['5340-100'].Salary.FY24,d['5340-100'].Salary.FY25,d['5340-100'].Salary.FY26],d['5340-100'].Salary.Budget);
+  drawLine('c4',[d['5310-100'].Contracts.FY24,d['5310-100'].Contracts.FY25,d['5310-100'].Contracts.FY26],d['5310-100'].Contracts.Budget);
+  drawLine('c5',[d['5340-264'].Contracts.FY24,d['5340-264'].Contracts.FY25,d['5340-264'].Contracts.FY26],d['5340-264'].Contracts.Budget);
+  drawLine('c6',[d['5350-200'].Expenses.FY24,d['5350-200'].Expenses.FY25,d['5350-200'].Expenses.FY26],d['5350-200'].Expenses.Budget);
+  drawLine('c7',[d['5350-200'].Salary.FY24,d['5350-200'].Salary.FY25,d['5350-200'].Salary.FY26],d['5350-200'].Salary.Budget);
+  drawLine('c8',[d['5310-475'].Contracts.FY24,d['5310-475'].Contracts.FY25,d['5310-475'].Contracts.FY26],d['5310-475'].Contracts.Budget);
+  drawLine('c9',[d['5320-264'].Expenses.FY24,d['5320-264'].Expenses.FY25,d['5320-264'].Expenses.FY26],d['5320-264'].Expenses.Budget);
+  // Tab 2 charts
+  drawCIPAnnual();
+  drawCIPYoY();
+}
+
+window.addEventListener('load',()=>setTimeout(drawAll,120));
+window.addEventListener('resize',drawAll);
+</script>
+
+<button id="hub-upload-btn" onclick="document.getElementById('hub-modal-bg').classList.add('open')">
+  <span>⬆</span> Update Data
+</button>
+<div id="hub-modal-bg" onclick="if(event.target===this)this.classList.remove('open')">
+  <div id="hub-modal">
+    <div class="hub-mhdr">
+      <div class="hub-mtitle">Update Budget & CIP Data</div>
+      <button class="hub-mclose" onclick="document.getElementById('hub-modal-bg').classList.remove('open')">×</button>
+    </div>
+    <p class="hub-msub">Upload your updated FY25-26_Status.xlsx. The dashboard will parse Lawson GL actuals and CIP project data automatically.</p>
+    <div class="hub-drop" id="hub-drop" onclick="document.getElementById('hub-file-input').click()">
+      <div class="hub-drop-icon">📂</div>
+      <div class="hub-drop-txt">Drop file here or click to browse</div>
+      <div class="hub-drop-sub" id="hub-filename">No file selected</div>
+      <input type="file" id="hub-file-input" accept=".xlsx,.xls">
+    </div>
+    <div class="hub-fmt">
+      <strong>Sheet 1 — Lawson GL (RawData_Lawson):</strong> Division · Account · Category · Monthly Cumulative Actuals · Budget<br>
+      <strong>Sheet 2 — CIP (RawData_CIP or CIP Projects):</strong> Project ID · Name · Budget · Spent · Encumbered · Remaining<br>
+      <strong>Tip:</strong> Column names are matched flexibly — exact names not required
+    </div>
+    <div class="hub-status" id="hub-status"></div>
+    <button class="hub-apply" id="hub-apply-btn">Apply & Refresh Dashboard</button>
+  </div>
+</div>
+
+<script>
+
+function hubParseFile(wb, fname){
+  // Need RawData_Lawson and RawData_CIP sheets (or similar names)
+  const sheetNames=wb.SheetNames;
+  const findSheet=(hint)=>sheetNames.find(s=>s.toLowerCase().replace(/[^a-z]/g,'').includes(hint.toLowerCase().replace(/[^a-z]/g,'')))||null;
+
+  const lawsonSheet=findSheet('lawson')||findSheet('raw')||sheetNames[0];
+  const cipSheet=findSheet('cip')||findSheet('project')||sheetNames[1];
+
+  if(!lawsonSheet)return{ok:false,error:'Cannot find Lawson data sheet'};
+
+  const lawsonRows=XLSX.utils.sheet_to_json(wb.Sheets[lawsonSheet],{raw:true,defval:0});
+  if(!lawsonRows.length)return{ok:false,error:'Lawson sheet is empty'};
+
+  // Detect columns
+  const keys=Object.keys(lawsonRows[0]);
+  const findCol=(hints)=>keys.find(k=>hints.some(h=>k.toLowerCase().includes(h.toLowerCase())))||null;
+
+  const divCol=findCol(['division','div','dept']);
+  const acctCol=findCol(['account','acct','obj']);
+  const catCol=findCol(['category','type','class']);
+  const monthCols=[];
+  const MONTHS=['jul','aug','sep','oct','nov','dec','jan','feb','mar','apr','may','jun'];
+  // Try to find monthly cumulative columns
+  for(const k of keys){
+    const kl=k.toLowerCase();
+    if(MONTHS.some(m=>kl.startsWith(m)||kl.includes(m))){
+      monthCols.push(k);
+    }
+  }
+  // FY columns
+  const fy24Col=findCol(['fy24','fy2024','2024 actual','prior year']);
+  const fy25Col=findCol(['fy25','fy2025','2025 actual','current year']);
+  const budgetCol=findCol(['budget','adopted','approved']);
+
+  // Build GD object from lawson data
+  // Group by division-account
+  const gdNew={};
+  const DIV_MAP={'5310':'5310','5320':'5320','5340':'5340','5350':'5350'};
+  const ACCT_MAP={'100':'Salary','200':'Salary','264':'Expenses','475':'Contracts','410':'Contracts','420':'Contracts'};
+  const TYPE_MAP={
+    'salary':'Salary','salaries':'Salary','personal':'Salary',
+    'contract':'Contracts','contracts':'Contracts','services':'Contracts',
+    'expense':'Expenses','expenses':'Expenses','supplies':'Expenses','materials':'Expenses'
+  };
+
+  lawsonRows.forEach(row=>{
+    const div=divCol?String(row[divCol]||'').trim():'';
+    const acct=acctCol?String(row[acctCol]||'').trim():'';
+    const catRaw=catCol?String(row[catCol]||'').trim().toLowerCase():'';
+
+    if(!div||!acct)return;
+
+    // Determine expense type
+    let expType=null;
+    for(const[k,v] of Object.entries(TYPE_MAP)){
+      if(catRaw.includes(k)){expType=v;break;}
+    }
+    if(!expType){
+      // Fall back to account number
+      const acctNum=acct.replace(/\D/g,'');
+      if(['100','150','101'].includes(acctNum))expType='Salary';
+      else if(['264','265','410','420','475'].includes(acctNum))expType='Contracts';
+      else expType='Expenses';
+    }
+
+    const divKey=div.replace(/[^0-9]/g,'').slice(0,4);
+    const acctKey=acct.replace(/[^0-9]/g,'').slice(0,3);
+    const gdKey=divKey+'-'+acctKey;
+
+    if(!gdNew[gdKey])gdNew[gdKey]={};
+    if(!gdNew[gdKey][expType])gdNew[gdKey][expType]={FY24:new Array(12).fill(0),FY25:new Array(12).fill(0),FY26:new Array(12).fill(0),Budget:0};
+
+    const entry=gdNew[gdKey][expType];
+
+    // Get budget
+    if(budgetCol)entry.Budget+=parseFloat(row[budgetCol])||0;
+
+    // Get monthly data - if month cols found use them, else use fy cols
+    if(monthCols.length>=12){
+      monthCols.slice(0,12).forEach((mc,i)=>{
+        entry.FY26[i]+=(parseFloat(row[mc])||0);
+      });
+    }
+    if(fy24Col)entry.FY24[11]+=(parseFloat(row[fy24Col])||0);
+    if(fy25Col)entry.FY25[11]+=(parseFloat(row[fy25Col])||0);
+  });
+
+  // If GD is empty or sparse, we fall back to current GD
+  const gdKeys=Object.keys(gdNew);
+  if(gdKeys.length<2){
+    return{ok:false,error:'Could not parse division/account structure from Lawson sheet. Expected columns: Division, Account, Category/Type, monthly actuals, Budget.'};
+  }
+
+  // Parse CIP if available
+  let cipNew=null;
+  if(cipSheet&&wb.Sheets[cipSheet]){
+    const cipRows=XLSX.utils.sheet_to_json(wb.Sheets[cipSheet],{raw:true,defval:0});
+    if(cipRows.length>0){
+      const ck=Object.keys(cipRows[0]);
+      const cf=(hints)=>ck.find(k=>hints.some(h=>k.toLowerCase().includes(h.toLowerCase())))||null;
+      const idC=cf(['id','c1295','project id']);
+      const nameC=cf(['name','title','project name','description']);
+      const budC=cf(['budget','total budget','appropriat']);
+      const spentC=cf(['spent','actual','expenditure','expended']);
+      const encC=cf(['encumb','committed','reserved']);
+      const remC=cf(['remain','balance','available']);
+      cipNew=cipRows.map(row=>({
+        id:idC?parseInt(row[idC])||0:0,
+        n:nameC?String(row[nameC]||''):'',
+        b:budC?parseFloat(row[budC])||0:0,
+        s:spentC?parseFloat(row[spentC])||0:0,
+        e:encC?parseFloat(row[encC])||0:0,
+        r:remC?parseFloat(row[remC])||0:0,
+        fy24s:0,fy25s:0,tags:['active'],note:''
+      })).filter(p=>p.n);
+    }
+  }
+
+  const summary=`Lawson: ${gdKeys.length} accounts parsed`+(cipNew?` · CIP: ${cipNew.length} projects`:'');
+  return{ok:true,gdNew,cipNew,summary};
+}
+
+function hubApplyData(data){
+  // Merge new GD data - only update keys that exist in new data
+  if(data.gdNew){
+    Object.entries(data.gdNew).forEach(([k,v])=>{
+      if(GD[k]){
+        // Update FY26 actuals and budget, preserve FY24/FY25 if not overridden
+        Object.entries(v).forEach(([type,vals])=>{
+          if(GD[k][type]){
+            if(vals.FY26.some(x=>x!==0))GD[k][type].FY26=vals.FY26;
+            if(vals.Budget>0)GD[k][type].Budget=vals.Budget;
+          }
+        });
+      } else {
+        GD[k]=v;
+      }
+    });
+  }
+  if(data.cipNew&&data.cipNew.length>0){
+    // Replace CIP array in place
+    CIP.length=0;
+    data.cipNew.forEach(p=>CIP.push(p));
+    render(CIP);
+  }
+  // Redraw everything
+  drawAll();
+  render(CIP);
+}
+
+
+// ── HUB UPLOAD DRAG/DROP ──
+(function(){
+  const drop=document.getElementById('hub-drop');
+  const inp=document.getElementById('hub-file-input');
+  const fn=document.getElementById('hub-filename');
+  const st=document.getElementById('hub-status');
+  const ap=document.getElementById('hub-apply-btn');
+  let _pendingData=null;
+  ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('drag-over');}));
+  ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('drag-over');}));
+  drop.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f){inp.files=e.dataTransfer.files;handleFile(f);}});
+  inp.addEventListener('change',()=>{if(inp.files[0])handleFile(inp.files[0]);});
+  function showStatus(msg,cls){st.className='hub-status '+cls;st.textContent=msg;}
+  function handleFile(file){
+    fn.textContent=file.name+' ('+Math.round(file.size/1024)+'KB)';
+    showStatus('Reading file…','load');
+    ap.classList.remove('vis');
+    _pendingData=null;
+    const reader=new FileReader();
+    reader.onload=function(e){
+      try{
+        const data=new Uint8Array(e.target.result);
+        const wb=XLSX.read(data,{type:'array',cellDates:true});
+        _pendingData=hubParseFile(wb,file.name);
+        if(_pendingData&&_pendingData.ok){
+          showStatus('✓ '+_pendingData.summary,'ok');
+          ap.classList.add('vis');
+        } else {
+          showStatus('✗ '+(_pendingData?_pendingData.error:'Could not parse file'),'err');
+        }
+      } catch(err){showStatus('✗ Parse error: '+err.message,'err');}
+    };
+    reader.readAsArrayBuffer(file);
+  }
+  ap.addEventListener('click',()=>{
+    if(!_pendingData||!_pendingData.ok)return;
+    try{
+      hubApplyData(_pendingData);
+      showStatus('✓ Dashboard updated!','ok');
+      ap.classList.remove('vis');
+      setTimeout(()=>document.getElementById('hub-modal-bg').classList.remove('open'),1200);
+    } catch(err){showStatus('✗ Apply error: '+err.message,'err');}
+  });
+})();
+
+</script>
+</body>
+</html>

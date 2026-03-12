@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Concord Transportation Division · Intelligence Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET & BASE ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --city-blue: #005EB8;
+  --city-blue-deep: #004a94;
+  --city-blue-glow: rgba(0, 94, 184, 0.35);
+  --city-yellow: #FFC72C;
+  --city-yellow-dim: rgba(255, 199, 44, 0.15);
+  --city-yellow-glow: rgba(255, 199, 44, 0.4);
+  --dark: #080f1e;
+  --dark-2: #0d1829;
+  --dark-3: #111f35;
+  --dark-4: #162b4d;
+  --border: rgba(255, 199, 44, 0.12);
+  --border-blue: rgba(0, 94, 184, 0.3);
+  --text: #e4ecf7;
+  --text-dim: #8ca0be;
+  --text-muted: #4d6280;
+  --nav-w: 220px;
+  --topbar-h: 58px;
+  --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html, body {
+  height: 100%;
+  background: var(--dark);
+  color: var(--text);
+  font-family: 'Sora', sans-serif;
+  overflow: hidden;
+}
+
+/* ─── TOPBAR ─── */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--topbar-h);
+  background: linear-gradient(90deg, var(--dark-2) 0%, #0a1628 60%, #0c1a32 100%);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px 0 calc(var(--nav-w) + 20px);
+  z-index: 200;
+  gap: 16px;
+}
+
+.topbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: var(--nav-w);
+  height: var(--topbar-h);
+  padding: 0 18px;
+  background: var(--dark-2);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.logo-emblem {
+  width: 32px;
+  height: 32px;
+  background: var(--city-blue);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.logo-emblem::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--city-yellow);
+}
+
+.logo-emblem svg {
+  width: 18px;
+  height: 18px;
+  fill: #fff;
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-city {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+
+.logo-dept {
+  font-size: 9px;
+  color: var(--city-yellow);
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.topbar-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.2px;
+}
+
+.topbar-title span {
+  color: var(--city-yellow);
+}
+
+.topbar-spacer { flex: 1; }
+
+.topbar-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.meta-pill {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+
+.meta-pill.live {
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  color: #34d399;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.meta-pill.live::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #34d399;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.meta-pill.dept {
+  background: var(--city-yellow-dim);
+  border: 1px solid rgba(255,199,44,0.25);
+  color: var(--city-yellow);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ─── SIDEBAR NAV ─── */
+.sidenav {
+  position: fixed;
+  top: var(--topbar-h);
+  left: 0;
+  width: var(--nav-w);
+  bottom: 0;
+  background: var(--dark-2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.nav-section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 18px 18px 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  position: relative;
+  transition: background var(--transition);
+  border-left: 3px solid transparent;
+  margin-bottom: 2px;
+}
+
+.nav-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--city-blue-glow), transparent);
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.nav-item:hover::before { opacity: 0.5; }
+.nav-item:hover { background: rgba(255,255,255,0.03); }
+
+.nav-item.active {
+  border-left-color: var(--city-yellow);
+  background: rgba(0,94,184,0.15);
+}
+
+.nav-item.active::before { opacity: 1; }
+
+.nav-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 15px;
+  transition: transform var(--transition);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.nav-item.active .nav-icon {
+  background: var(--city-blue);
+  border-color: var(--city-blue);
+  transform: scale(1.05);
+}
+
+.nav-labels { flex: 1; min-width: 0; }
+
+.nav-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  line-height: 1.2;
+  transition: color var(--transition);
+}
+
+.nav-item.active .nav-name,
+.nav-item:hover .nav-name { color: var(--text); }
+
+.nav-sub {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: 'DM Mono', monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  margin-top: 1px;
+}
+
+.nav-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+.nav-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 10px 18px;
+}
+
+.nav-footer {
+  margin-top: auto;
+  padding: 16px 18px;
+  border-top: 1px solid var(--border);
+}
+
+.nav-footer-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  letter-spacing: 0.3px;
+}
+
+/* ─── CONTENT AREA ─── */
+.content-area {
+  position: fixed;
+  top: var(--topbar-h);
+  left: var(--nav-w);
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+/* ─── IFRAME PANELS ─── */
+.panel {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.panel-iframe {
+  width: 100%;
+  flex: 1;
+  border: none;
+  display: block;
+  background: var(--dark);
+}
+
+/* ─── LANDING / HOME PANEL ─── */
+.home-panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--dark);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  overflow-y: auto;
+  padding: 40px 20px;
+}
+
+.home-panel.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Noise texture overlay */
+.home-panel::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+.home-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  width: 100%;
+}
+
+.home-hero {
+  text-align: center;
+  margin-bottom: 52px;
+}
+
+.home-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--city-yellow);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.home-eyebrow::before,
+.home-eyebrow::after {
+  content: '';
+  height: 1px;
+  width: 40px;
+  background: linear-gradient(90deg, transparent, var(--city-yellow));
+}
+
+.home-eyebrow::after {
+  background: linear-gradient(90deg, var(--city-yellow), transparent);
+}
+
+.home-h1 {
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  margin-bottom: 16px;
+}
+
+.home-h1 em {
+  font-style: normal;
+  color: var(--city-yellow);
+  position: relative;
+}
+
+.home-sub {
+  font-size: 15px;
+  color: var(--text-dim);
+  font-weight: 300;
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+/* Grid of module cards */
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.module-card {
+  background: var(--dark-3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 22px 20px;
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+}
+
+.module-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent, var(--city-blue));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.module-card:hover {
+  border-color: rgba(0, 94, 184, 0.4);
+  background: var(--dark-4);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border-blue);
+}
+
+.module-card:hover::before {
+  transform: scaleX(1);
+}
+
+.card-icon {
+  font-size: 28px;
+  margin-bottom: 14px;
+  display: block;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 5px;
+  line-height: 1.3;
+}
+
+.card-desc {
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.card-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.06);
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.card-cta {
+  position: absolute;
+  bottom: 20px;
+  right: 18px;
+  font-size: 18px;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: all 0.2s ease;
+  color: var(--city-yellow);
+}
+
+.module-card:hover .card-cta {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Stats strip */
+.stats-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.strip-stat {
+  background: var(--dark-3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  text-align: center;
+}
+
+.strip-num {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--city-yellow);
+  line-height: 1;
+  font-family: 'DM Mono', monospace;
+  display: block;
+}
+
+.strip-lbl {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'DM Mono', monospace;
+}
+
+/* Loading indicator for iframes */
+.panel-loader {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--dark);
+  z-index: 10;
+  transition: opacity 0.3s ease;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel-loader.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loader-ring {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--city-blue);
+  border-right-color: var(--city-yellow);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loader-txt {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,199,44,0.2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,199,44,0.4); }
+
+/* Fade-in animation */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.home-hero { animation: fadeUp 0.5s ease both; }
+.stats-strip { animation: fadeUp 0.5s 0.1s ease both; }
+.module-grid { animation: fadeUp 0.5s 0.2s ease both; }
+
+</style>
+</head>
+<body>
+
+<!-- ─── TOPBAR ─── -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="logo-emblem">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5v7L12 19.5 4 15.5v-7l8-4.32z"/>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <span class="logo-city">City of Concord</span>
+      <span class="logo-dept">Transportation</span>
+    </div>
+  </div>
+
+  <span class="topbar-title" id="topbar-title">Intelligence <span>Hub</span></span>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-meta">
+    <div class="meta-pill live">Systems Active</div>
+    <div class="meta-pill dept">FY 2025–26</div>
+  </div>
+</div>
+
+<!-- ─── SIDENAV ─── -->
+<nav class="sidenav">
+  <div class="nav-section-label">Dashboards</div>
+
+  <button class="nav-item active" data-panel="home" onclick="switchPanel('home', this)">
+    <div class="nav-icon">🏠</div>
+    <div class="nav-labels">
+      <span class="nav-name">Overview</span>
+      <span class="nav-sub">Hub home</span>
+    </div>
+  </button>
+
+  <button class="nav-item" data-panel="budget" onclick="switchPanel('budget', this)">
+    <div class="nav-icon">📊</div>
+    <div class="nav-labels">
+      <span class="nav-name">Budget & CIP</span>
+      <span class="nav-sub">FY 25–26 status</span>
+    </div>
+    <span class="nav-badge" style="background:rgba(96,165,250,0.15);color:#60a5fa;border:1px solid rgba(96,165,250,0.3)">4 div</span>
+  </button>
+
+  <button class="nav-item" data-panel="requests" onclick="switchPanel('requests', this)">
+    <div class="nav-icon">📍</div>
+    <div class="nav-labels">
+      <span class="nav-name">Resident Requests</span>
+      <span class="nav-sub">2022–2025 · mapped</span>
+    </div>
+    <span class="nav-badge" style="background:rgba(167,139,250,0.15);color:#a78bfa;border:1px solid rgba(167,139,250,0.3)">633</span>
+  </button>
+
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">Signal Operations</div>
+
+  <button class="nav-item" data-panel="signal" onclick="switchPanel('signal', this)">
+    <div class="nav-icon">🚦</div>
+    <div class="nav-labels">
+      <span class="nav-name">Signal Upgrades</span>
+      <span class="nav-sub">152 intersections</span>
+    </div>
+    <span class="nav-badge" style="background:rgba(251,146,60,0.15);color:#fb923c;border:1px solid rgba(251,146,60,0.3)">8 proj</span>
+  </button>
+
+  <button class="nav-item" data-panel="spm" onclick="switchPanel('spm', this)">
+    <div class="nav-icon">📡</div>
+    <div class="nav-labels">
+      <span class="nav-name">SPM / ITERIS</span>
+      <span class="nav-sub">Performance metrics</span>
+    </div>
+    <span class="nav-badge" style="background:rgba(45,212,191,0.15);color:#2dd4bf;border:1px solid rgba(45,212,191,0.3)">live</span>
+  </button>
+
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">Grants & Funding</div>
+
+  <button class="nav-item" data-panel="grant" onclick="switchPanel('grant', this)">
+    <div class="nav-icon">💡</div>
+    <div class="nav-labels">
+      <span class="nav-name">Grant Intelligence</span>
+      <span class="nav-sub">HSIP · SS4A · ATP</span>
+    </div>
+    <span class="nav-badge" style="background:rgba(52,211,153,0.15);color:#34d399;border:1px solid rgba(52,211,153,0.3)">C13</span>
+  </button>
+
+  <div class="nav-footer">
+    <div class="nav-footer-text">
+      Concord Transportation<br>
+      Division Intelligence Hub<br>
+      Updated Mar 2026
+    </div>
+  </div>
+</nav>
+
+<!-- ─── CONTENT AREA ─── -->
+<div class="content-area">
+
+  <!-- HOME PANEL -->
+  <div class="home-panel active" id="panel-home">
+    <div class="home-inner">
+      <div class="home-hero">
+        <div class="home-eyebrow">Transportation Division</div>
+        <h1 class="home-h1">Concord <em>Intelligence</em> Hub</h1>
+        <p class="home-sub">Unified view of transportation operations, capital programs, resident requests, signal performance, and grant intelligence — all in one place.</p>
+      </div>
+
+      <div class="stats-strip">
+        <div class="strip-stat">
+          <span class="strip-num">633</span>
+          <span class="strip-lbl">Resident Requests</span>
+        </div>
+        <div class="strip-stat">
+          <span class="strip-num">152</span>
+          <span class="strip-lbl">Signalized Intersections</span>
+        </div>
+        <div class="strip-stat">
+          <span class="strip-num">22</span>
+          <span class="strip-lbl">Active CIP Projects</span>
+        </div>
+        <div class="strip-stat">
+          <span class="strip-num">$3.5M</span>
+          <span class="strip-lbl">TMC Capital Ask</span>
+        </div>
+      </div>
+
+      <div class="module-grid">
+
+        <div class="module-card" style="--accent:#60a5fa" onclick="switchPanel('budget', document.querySelector('[data-panel=budget]'))">
+          <span class="card-icon">📊</span>
+          <div class="card-title">FY 2025–26 Budget & CIP Status</div>
+          <div class="card-desc">Operating budget across 4 divisions, 22 CIP projects with Lawson GL actuals and Measure V breakdown.</div>
+          <div class="card-tags">
+            <span class="card-tag">Operating</span>
+            <span class="card-tag">CIP</span>
+            <span class="card-tag">Lawson</span>
+            <span class="card-tag">Measure V</span>
+          </div>
+          <span class="card-cta">→</span>
+        </div>
+
+        <div class="module-card" style="--accent:#a78bfa" onclick="switchPanel('requests', document.querySelector('[data-panel=requests]'))">
+          <span class="card-icon">📍</span>
+          <div class="card-title">Resident Requests Map</div>
+          <div class="card-desc">633 geocoded requests from 2022–2025 across 13 category buckets — filterable by year, type, outcome, and speeding flag.</div>
+          <div class="card-tags">
+            <span class="card-tag">Map</span>
+            <span class="card-tag">2022–2025</span>
+            <span class="card-tag">Geocoded</span>
+            <span class="card-tag">13 Categories</span>
+          </div>
+          <span class="card-cta">→</span>
+        </div>
+
+        <div class="module-card" style="--accent:#fb923c" onclick="switchPanel('signal', document.querySelector('[data-panel=signal]'))">
+          <span class="card-icon">🚦</span>
+          <div class="card-title">Signal Upgrade Tracker</div>
+          <div class="card-desc">8 upgrade projects covering 152 intersections — matrix view, project progress, and upgrade-type breakdown.</div>
+          <div class="card-tags">
+            <span class="card-tag">Signals</span>
+            <span class="card-tag">8 Projects</span>
+            <span class="card-tag">152 Sites</span>
+          </div>
+          <span class="card-cta">→</span>
+        </div>
+
+        <div class="module-card" style="--accent:#2dd4bf" onclick="switchPanel('spm', document.querySelector('[data-panel=spm]'))">
+          <span class="card-icon">📡</span>
+          <div class="card-title">ITERIS SPM Dashboard</div>
+          <div class="card-desc">Signal performance monitoring status — SPM, RLR, and VLive deployment tracker across all Concord signalized intersections.</div>
+          <div class="card-tags">
+            <span class="card-tag">ITERIS</span>
+            <span class="card-tag">SPM</span>
+            <span class="card-tag">RLR</span>
+            <span class="card-tag">VLive</span>
+          </div>
+          <span class="card-cta">→</span>
+        </div>
+
+        <div class="module-card" style="--accent:#34d399" onclick="switchPanel('grant', document.querySelector('[data-panel=grant]'))">
+          <span class="card-icon">💡</span>
+          <div class="card-title">Grant Intelligence Module</div>
+          <div class="card-desc">5-cycle HSIP program analysis (C8–C12), Concord collision data 2020–2025, and Cycle 13 strategy planning.</div>
+          <div class="card-tags">
+            <span class="card-tag">HSIP</span>
+            <span class="card-tag">SS4A</span>
+            <span class="card-tag">ATP</span>
+            <span class="card-tag">Cycle 13</span>
+          </div>
+          <span class="card-cta">→</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- IFRAME PANELS -->
+  <div class="panel" id="panel-budget">
+    <div class="panel-loader" id="loader-budget">
+      <div class="loader-ring"></div>
+      <div class="loader-txt">Loading Budget & CIP…</div>
+    </div>
+    <iframe class="panel-iframe" id="iframe-budget" title="FY 25-26 Budget & CIP Status"></iframe>
+  </div>
+
+  <div class="panel" id="panel-requests">
+    <div class="panel-loader" id="loader-requests">
+      <div class="loader-ring"></div>
+      <div class="loader-txt">Loading Resident Requests…</div>
+    </div>
+    <iframe class="panel-iframe" id="iframe-requests" title="Resident Requests Dashboard"></iframe>
+  </div>
+
+  <div class="panel" id="panel-signal">
+    <div class="panel-loader" id="loader-signal">
+      <div class="loader-ring"></div>
+      <div class="loader-txt">Loading Signal Tracker…</div>
+    </div>
+    <iframe class="panel-iframe" id="iframe-signal" title="Signal Upgrade Tracker"></iframe>
+  </div>
+
+  <div class="panel" id="panel-spm">
+    <div class="panel-loader" id="loader-spm">
+      <div class="loader-ring"></div>
+      <div class="loader-txt">Loading SPM Dashboard…</div>
+    </div>
+    <iframe class="panel-iframe" id="iframe-spm" title="ITERIS SPM Dashboard"></iframe>
+  </div>
+
+  <div class="panel" id="panel-grant">
+    <div class="panel-loader" id="loader-grant">
+      <div class="loader-ring"></div>
+      <div class="loader-txt">Loading Grant Intelligence…</div>
+    </div>
+    <iframe class="panel-iframe" id="iframe-grant" title="Grant Intelligence Module"></iframe>
+  </div>
+
+</div>
+
+<script>
+const PANELS = {
+  budget:   { file: 'FY25-26_Dashboard_v2_march_6_data.html',     title: 'Budget & CIP Status' },
+  requests: { file: 'concord_resident_requests_dashboard.html',    title: 'Resident Requests' },
+  signal:   { file: 'Concord_Signal_Upgrade_Dashboard.html',       title: 'Signal Upgrade Tracker' },
+  spm:      { file: 'Concord_Signal_SPM_Dashboard.html',           title: 'SPM / ITERIS Dashboard' },
+  grant:    { file: 'Grant_Intelligence_Module.html',              title: 'Grant Intelligence' },
+};
+
+const loaded = {};
+let currentPanel = 'home';
+
+function switchPanel(id, btn) {
+  // Deactivate all nav items
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  // Hide all panels
+  document.querySelectorAll('.panel').forEach(el => el.classList.remove('active'));
+  document.querySelector('.home-panel').classList.remove('active');
+
+  // Update topbar title
+  const titleEl = document.getElementById('topbar-title');
+  if (id === 'home') {
+    titleEl.innerHTML = 'Intelligence <span>Hub</span>';
+  } else {
+    titleEl.innerHTML = PANELS[id].title.replace(/(\w+)$/, '<span>$1</span>');
+  }
+
+  // Show target panel
+  if (id === 'home') {
+    document.querySelector('.home-panel').classList.add('active');
+  } else {
+    const panel = document.getElementById('panel-' + id);
+    panel.classList.add('active');
+
+    // Lazy-load iframe
+    if (!loaded[id]) {
+      loaded[id] = true;
+      const iframe = document.getElementById('iframe-' + id);
+      iframe.src = PANELS[id].file;
+      iframe.onload = () => {
+        const loader = document.getElementById('loader-' + id);
+        if (loader) loader.classList.add('hidden');
+      };
+    }
+  }
+
+  currentPanel = id;
+}
+
+// Keyboard shortcut: 1-6 to switch panels
+document.addEventListener('keydown', e => {
+  const map = {'1':'home','2':'budget','3':'requests','4':'signal','5':'spm','6':'grant'};
+  if (map[e.key]) {
+    const btn = document.querySelector(`[data-panel="${map[e.key]}"]`);
+    switchPanel(map[e.key], btn);
+  }
+});
+</script>
+</body>
+</html>
