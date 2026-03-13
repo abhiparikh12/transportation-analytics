@@ -1,0 +1,3132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Concord Development Review Tool</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0a1628;
+  --navy2: #0d1f3c;
+  --navy3: #112240;
+  --blue: #005EB8;
+  --blue-light: #1a7fd4;
+  --yellow: #FFC72C;
+  --yellow-dim: rgba(255,199,44,0.15);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --text: #e8eef8;
+  --text-muted: #7a90b0;
+  --text-dim: #3d5070;
+  --border: rgba(255,199,44,0.12);
+  --border-blue: rgba(0,94,184,0.3);
+  --planning-color: #818cf8;
+  --planning-dim: rgba(129,140,248,0.12);
+  --transport-color: #34d399;
+  --transport-dim: rgba(52,211,153,0.12);
+  --shared-color: #fb923c;
+  --shared-dim: rgba(251,146,60,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Sora', sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── BACKGROUND TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(0,94,184,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(255,199,44,0.04) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── HEADER ── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10,22,40,0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-badge {
+  width: 38px;
+  height: 38px;
+  background: var(--blue);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px rgba(0,94,184,0.3), 0 4px 12px rgba(0,94,184,0.3);
+}
+
+.header-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  color: #fff;
+  letter-spacing: -0.3px;
+  line-height: 1.1;
+}
+.header-title span {
+  color: var(--yellow);
+}
+.header-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-top: 1px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.progress-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--navy3);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.progress-bar-wrap {
+  width: 80px;
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--blue), var(--yellow));
+  border-radius: 2px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
+
+.btn-reset {
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.25);
+  color: #f87171;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 7px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-reset:hover { background: rgba(239,68,68,0.18); }
+
+.btn-print {
+  background: var(--blue);
+  border: none;
+  color: #fff;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 7px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-print:hover { background: var(--blue-light); }
+
+/* ── MAIN LAYOUT ── */
+.app {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: calc(100vh - 64px);
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  border-right: 1px solid var(--border);
+  padding: 24px 0;
+  position: sticky;
+  top: 64px;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+}
+
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.sidebar-project {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.sidebar-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.project-input {
+  width: 100%;
+  background: var(--navy3);
+  border: 1px solid var(--border-blue);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-family: 'Sora', sans-serif;
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+  margin-bottom: 8px;
+  transition: border-color 0.2s;
+}
+.project-input:focus { border-color: var(--blue); }
+.project-input::placeholder { color: var(--text-dim); }
+
+.phase-nav-label {
+  padding: 0 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+
+.phase-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 20px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+}
+.phase-btn:hover { background: rgba(255,255,255,0.03); }
+.phase-btn.active { background: rgba(0,94,184,0.08); }
+.phase-btn.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  background: var(--blue);
+  border-radius: 0 2px 2px 0;
+}
+
+.phase-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.phase-info { flex: 1; min-width: 0; }
+.phase-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.phase-btn.active .phase-name { color: #fff; }
+
+.phase-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+}
+.phase-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+}
+.phase-complete-pct {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--green);
+}
+
+.phase-check-icon { font-size: 11px; }
+
+/* Legend */
+.sidebar-legend {
+  margin: 20px;
+  padding: 14px;
+  background: var(--navy3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.legend-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.legend-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── MAIN CONTENT ── */
+.main {
+  padding: 28px 32px;
+  min-height: 100%;
+}
+
+/* ── PHASE HEADER ── */
+.phase-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.phase-title-area {}
+.phase-number-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.phase-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+.phase-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  max-width: 600px;
+}
+
+.phase-stats {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.stat-box {
+  background: var(--navy3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 16px;
+  text-align: center;
+  min-width: 60px;
+}
+.stat-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ── SECTION GROUPING ── */
+.section-group {
+  margin-bottom: 28px;
+}
+
+.section-group-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.section-group-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.section-group-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.section-group-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  border: 1px solid;
+}
+
+.section-group-toggle {
+  font-size: 10px;
+  color: var(--text-dim);
+  transition: transform 0.2s;
+}
+.section-group.collapsed .section-group-toggle {
+  transform: rotate(-90deg);
+}
+.section-group.collapsed .items-wrap {
+  display: none;
+}
+
+/* ── CHECKLIST ITEMS ── */
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+  background: rgba(255,255,255,0.02);
+}
+
+.checklist-item:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.06);
+}
+
+.checklist-item.checked {
+  background: var(--green-dim);
+  border-color: rgba(34,197,94,0.2);
+}
+.checklist-item.checked .item-title {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  text-decoration-color: rgba(122,144,176,0.5);
+}
+.checklist-item.flagged {
+  background: var(--amber-dim);
+  border-color: rgba(245,158,11,0.25);
+}
+.checklist-item.na {
+  background: rgba(255,255,255,0.01);
+  border-color: rgba(255,255,255,0.04);
+  opacity: 0.55;
+}
+
+/* Checkbox */
+.item-checkbox {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1.5px solid var(--text-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: all 0.2s;
+  font-size: 12px;
+  background: transparent;
+}
+.checklist-item.checked .item-checkbox {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+.checklist-item.flagged .item-checkbox {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: #fff;
+}
+.checklist-item.na .item-checkbox {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.1);
+  color: var(--text-dim);
+  font-size: 10px;
+}
+
+.item-content { flex: 1; min-width: 0; }
+
+.item-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.item-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.4;
+  transition: all 0.2s;
+}
+
+.item-tags {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tag-planning {
+  background: var(--planning-dim);
+  color: var(--planning-color);
+  border: 1px solid rgba(129,140,248,0.2);
+}
+.tag-transport {
+  background: var(--transport-dim);
+  color: var(--transport-color);
+  border: 1px solid rgba(52,211,153,0.2);
+}
+.tag-shared {
+  background: var(--shared-dim);
+  color: var(--shared-color);
+  border: 1px solid rgba(251,146,60,0.2);
+}
+.tag-required {
+  background: rgba(239,68,68,0.1);
+  color: #f87171;
+  border: 1px solid rgba(239,68,68,0.2);
+}
+.tag-conditional {
+  background: rgba(245,158,11,0.1);
+  color: #fbbf24;
+  border: 1px solid rgba(245,158,11,0.2);
+}
+
+.item-detail {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-top: 3px;
+}
+
+.item-code {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+.item-code a {
+  color: var(--blue-light);
+  text-decoration: none;
+}
+.item-code a:hover { text-decoration: underline; }
+
+/* Item action buttons */
+.item-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.checklist-item:hover .item-actions { opacity: 1; }
+
+.action-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  padding: 3px 7px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.action-btn:hover {
+  background: var(--navy3);
+  color: var(--text-muted);
+}
+.action-btn.flag-btn:hover {
+  background: var(--amber-dim);
+  border-color: rgba(245,158,11,0.3);
+  color: var(--amber);
+}
+.action-btn.na-btn:hover {
+  background: rgba(255,255,255,0.05);
+  color: var(--text-muted);
+}
+
+/* Note input */
+.item-note-wrap {
+  margin-top: 8px;
+  display: none;
+}
+.checklist-item.has-note .item-note-wrap,
+.checklist-item.flagged .item-note-wrap { display: block; }
+.item-note {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-family: 'Sora', sans-serif;
+  font-size: 11px;
+  color: var(--text);
+  resize: vertical;
+  min-height: 50px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.item-note:focus { border-color: var(--blue); }
+.item-note::placeholder { color: var(--text-dim); }
+
+/* ── FILTER BAR ── */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-right: 2px;
+}
+
+.filter-btn {
+  background: var(--navy3);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.filter-btn:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+.filter-btn.active {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+.filter-btn.active.f-planning {
+  background: rgba(129,140,248,0.2);
+  border-color: rgba(129,140,248,0.4);
+  color: var(--planning-color);
+}
+.filter-btn.active.f-transport {
+  background: rgba(52,211,153,0.2);
+  border-color: rgba(52,211,153,0.4);
+  color: var(--transport-color);
+}
+
+/* ── PHASE PANEL VISIBILITY ── */
+.phase-panel { display: none; }
+.phase-panel.active { display: block; }
+
+/* ── SUMMARY PANEL ── */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.summary-card {
+  background: var(--navy3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  transition: border-color 0.2s;
+}
+.summary-card:hover { border-color: rgba(0,94,184,0.3); }
+
+.summary-card-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+
+.summary-card-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 36px;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.summary-card-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.flags-list {
+  background: var(--navy3);
+  border: 1px solid rgba(245,158,11,0.25);
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 20px;
+}
+
+.flags-list-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.flag-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 12px;
+}
+.flag-row:last-child { border-bottom: none; }
+
+.flag-icon { color: var(--amber); flex-shrink: 0; }
+
+.flag-phase {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  flex-shrink: 0;
+  min-width: 100px;
+}
+.flag-text { color: var(--text-muted); }
+
+/* ── PRINT STYLES ── */
+@media print {
+  body { background: #fff; color: #000; }
+  .header { position: relative; background: #fff; border-bottom: 2px solid #005EB8; }
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .header-right { display: none; }
+  .phase-panel { display: block !important; break-before: page; }
+  .phase-panel:first-of-type { break-before: auto; }
+  .checklist-item { border: 1px solid #ddd; break-inside: avoid; }
+  .item-actions { display: none; }
+  body::before { display: none; }
+}
+
+/* ── TOAST NOTIFICATION ── */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--navy3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text);
+  z-index: 9999;
+  transform: translateY(80px);
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-dim);
+}
+.empty-state-icon { font-size: 40px; margin-bottom: 14px; }
+.empty-state-text { font-size: 13px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { 
+    position: static; 
+    height: auto; 
+    border-right: none; 
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    padding: 12px;
+    gap: 6px;
+  }
+  .sidebar-project, .sidebar-legend, .phase-nav-label { display: none; }
+  .phase-btn {
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    width: auto;
+  }
+  .phase-btn.active { border-color: var(--blue); }
+  .phase-btn.active::before { display: none; }
+  .phase-info .phase-count { display: none; }
+  .main { padding: 20px 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="header-title">Development Review <span>Tool</span></div>
+    <div class="header-sub">CMC Title 18 &amp; 19 · Planning &amp; Transportation</div>
+  </div>
+  <div class="header-right">
+    <div class="progress-pill">
+      <span id="progress-text">0 / 0</span>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+      </div>
+      <span id="progress-pct">0%</span>
+    </div>
+    <button class="btn-reset" onclick="resetAll()">↺ Reset</button>
+    <button class="btn-print" onclick="window.print()">⎙ Print</button>
+  </div>
+</header>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-project">
+      <div class="sidebar-label">Project Info</div>
+      <input type="text" class="project-input" placeholder="Project name / address" id="proj-name">
+      <input type="text" class="project-input" placeholder="APN / Case number" id="proj-apn">
+      <input type="text" class="project-input" placeholder="Applicant" id="proj-applicant">
+      <input type="text" class="project-input" placeholder="Date received" id="proj-date">
+    </div>
+
+    <div class="phase-nav-label">Review Phases</div>
+
+    <button class="phase-btn active" data-phase="0" onclick="switchPhase(0, this)">
+      <div class="phase-num" style="background:rgba(255,199,44,0.15);color:#FFC72C;">①</div>
+      <div class="phase-info">
+        <div class="phase-name">Pre-Application</div>
+        <div class="phase-meta">
+          <span class="phase-count" id="count-0">— items</span>
+          <span class="phase-complete-pct" id="pct-0"></span>
+        </div>
+      </div>
+    </button>
+
+    <button class="phase-btn" data-phase="1" onclick="switchPhase(1, this)">
+      <div class="phase-num" style="background:rgba(0,94,184,0.15);color:#60a5fa;">②</div>
+      <div class="phase-info">
+        <div class="phase-name">Application Intake</div>
+        <div class="phase-meta">
+          <span class="phase-count" id="count-1">— items</span>
+          <span class="phase-complete-pct" id="pct-1"></span>
+        </div>
+      </div>
+    </button>
+
+    <button class="phase-btn" data-phase="2" onclick="switchPhase(2, this)">
+      <div class="phase-num" style="background:rgba(129,140,248,0.15);color:#a5b4fc;">③</div>
+      <div class="phase-info">
+        <div class="phase-name">Zoning & Land Use</div>
+        <div class="phase-meta">
+          <span class="phase-count" id="count-2">— items</span>
+          <span class="phase-complete-pct" id="pct-2"></span>
+        </div>
+      </div>
+    </button>
+
+    <button class="phase-btn" data-phase="3" onclick="switchPhase(3, this)">
+      <div class="phase-num" style="background:rgba(52,211,153,0.15);color:#6ee7b7;">④</div>
+      <div class="phase-info">
+        <div class="phase-name">Transportation Review</div>
+        <div class="phase-meta">
+          <span class="phase-count" id="count-3">— items</span>
+          <span class="phase-complete-pct" id="pct-3"></span>
+        </div>
+      </div>
+    </button>
+
+    <button class="phase-btn" data-phase="4" onclick="switchPhase(4, this)">
+      <div class="phase-num" style="background:rgba(251,146,60,0.15);color:#fdba74;">⑤</div>
+      <div class="phase-info">
+        <div class="phase-name">Development Standards</div>
+        <div class="phase-meta">
+          <span class="phase-count" id="count-4">— items</span>
+          <span class="phase-complete-pct" id="pct-4"></span>
+        </div>
+      </div>
+    </button>
+
+    <button class="phase-btn" data-phase="5" onclick="switchPhase(5, this)">
+      <div class="phase-num" style="background:rgba(34,211,238,0.15);color:#67e8f9;">⑥</div>
+      <div class="phase-info">
+        <div class="phase-name">Resource & Environment</div>
+        <div class="phase-meta">
+          <span class="phase-count" id="count-5">— items</span>
+          <span class="phase-complete-pct" id="pct-5"></span>
+        </div>
+      </div>
+    </button>
+
+    <button class="phase-btn" data-phase="6" onclick="switchPhase(6, this)">
+      <div class="phase-num" style="background:rgba(167,139,250,0.15);color:#c4b5fd;">⑦</div>
+      <div class="phase-info">
+        <div class="phase-name">Permit Type & Authority</div>
+        <div class="phase-meta">
+          <span class="phase-count" id="count-6">— items</span>
+          <span class="phase-complete-pct" id="pct-6"></span>
+        </div>
+      </div>
+    </button>
+
+    <button class="phase-btn" data-phase="7" onclick="switchPhase(7, this)">
+      <div class="phase-num" style="background:rgba(244,114,182,0.15);color:#f9a8d4;">⑧</div>
+      <div class="phase-info">
+        <div class="phase-name">Conditions & Closeout</div>
+        <div class="phase-meta">
+          <span class="phase-count" id="count-7">— items</span>
+          <span class="phase-complete-pct" id="pct-7"></span>
+        </div>
+      </div>
+    </button>
+
+    <div class="phase-nav-label" style="margin-top:8px;color:rgba(251,146,60,0.7);">Title 19 Programs</div>
+
+    <button class="phase-btn" data-phase="8" onclick="switchPhase(8, this)">
+      <div class="phase-num" style="background:rgba(251,146,60,0.15);color:#fb923c;">⑨</div>
+      <div class="phase-info">
+        <div class="phase-name">Title 19 Fees &amp; Programs</div>
+        <div class="phase-meta">
+          <span class="phase-count" id="count-8">— items</span>
+          <span class="phase-complete-pct" id="pct-8"></span>
+        </div>
+      </div>
+    </button>
+
+    <button class="phase-btn" data-phase="9" onclick="switchPhase(9, this)">
+      <div class="phase-num" style="background:rgba(255,199,44,0.15);color:#FFC72C;">★</div>
+      <div class="phase-info">
+        <div class="phase-name">Summary & Flags</div>
+        <div class="phase-meta">
+          <span class="phase-count" id="count-9"></span>
+        </div>
+      </div>
+    </button>
+
+    <div class="sidebar-legend">
+      <div class="legend-title">Division Key</div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#818cf8"></div>
+        Planning Division
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#34d399"></div>
+        Transportation/Engineering
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#fb923c"></div>
+        Both Divisions
+      </div>
+      <div style="margin-top:10px; padding-top:10px; border-top:1px solid var(--border);">
+        <div class="legend-item"><span style="color:#f87171;font-family:'DM Mono',monospace;font-size:10px;">REQ</span>&nbsp;Always required</div>
+        <div class="legend-item"><span style="color:#fbbf24;font-family:'DM Mono',monospace;font-size:10px;">COND</span>&nbsp;Conditionally required</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main" id="main-content">
+
+    <!-- ══════════════════════════════════
+         PHASE 0: PRE-APPLICATION
+    ══════════════════════════════════ -->
+    <div class="phase-panel active" id="phase-0">
+      <div class="phase-header">
+        <div class="phase-title-area">
+          <div class="phase-number-badge">Phase 1 of 9</div>
+          <div class="phase-title">Pre-Application</div>
+          <div class="phase-desc">Steps to complete before a formal application is filed. Covers initial meeting requirements, project scoping, and preliminary review per CMC §18.402.</div>
+        </div>
+        <div class="phase-stats">
+          <div class="stat-box">
+            <div class="stat-num" id="ph0-done" style="color:var(--green)">0</div>
+            <div class="stat-label">Done</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="ph0-total" style="color:var(--text-muted)">0</div>
+            <div class="stat-label">Total</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <button class="filter-btn active" onclick="setFilter(this,'all')">All</button>
+        <button class="filter-btn f-planning" onclick="setFilter(this,'planning')">Planning</button>
+        <button class="filter-btn f-transport" onclick="setFilter(this,'transport')">Transportation</button>
+        <button class="filter-btn" onclick="setFilter(this,'required')">Required Only</button>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--planning-color)">Planning Division</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-planning">PRE-APP</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Schedule initial meeting with Planning staff</div>
+                <div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div>
+              </div>
+              <div class="item-detail">Required before filing any discretionary permit application (except SB 330 projects). Covers city requirements, approval process, and submittal checklist.</div>
+              <div class="item-code">§18.402.020 | CMC Title 18</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Determine if Pre-Application review is required</div>
+                <div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div>
+              </div>
+              <div class="item-detail">Required for: all infill residential, projects within 300 ft of residential district, projects over 10 units or 10,000 sq ft, or SB 330 projects. All others: voluntary.</div>
+              <div class="item-code">§18.402.030 — §18.402.040</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Identify applicable zoning district and overlay zones</div>
+                <div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div>
+              </div>
+              <div class="item-detail">Confirm base zone (RR/RS/RL/RM/RH, NTS, CO/CMX/NC/SC/RC, DP/DMX/WMX, OBP/IBP/IMX/HI, PQP) and any overlays (Airport A, Transit TS, Cannabis, Affordable Housing).</div>
+              <div class="item-code">§18.15.020 — Table 18.15.020</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Verify General Plan consistency</div>
+                <div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div>
+              </div>
+              <div class="item-detail">Any approval must be consistent with the General Plan and applicable specific plans. GP prevails over Development Code in case of conflict.</div>
+              <div class="item-code">§18.10.040</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Identify required technical studies upfront</div>
+                <div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div>
+              </div>
+              <div class="item-detail">May include: traffic study, soils report, arborist report, hydrologic study, noise study, air quality analysis, geotechnical study, cultural resources study.</div>
+              <div class="item-code">§18.402.020(A)(5) | §18.300.060 | §18.305.030 | §18.310.040</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--transport-color)">Transportation / Engineering</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-transport">PRE-APP</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-tags="transport conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Determine if Traffic Impact Study (TIS/TIA) is required</div>
+                <div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-conditional">COND</span></div>
+              </div>
+              <div class="item-detail">Required for multi-family/non-residential projects. City Engineer may require based on scale, location, or anticipated vehicle trips. Discuss scope and methodology at pre-app meeting.</div>
+              <div class="item-code">§18.160.110(A)(2)(a) | General Plan Circulation Element</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Identify frontage improvements and dedications needed</div>
+                <div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-required">REQ</span></div>
+              </div>
+              <div class="item-detail">City Engineer determines required frontage improvements (curbs, gutters, sidewalks, paving, lighting, storm drains) using General Plan/master plan policies. Early identification avoids late design changes.</div>
+              <div class="item-code">§18.150.050</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Assess site access constraints and driveway feasibility</div>
+                <div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-conditional">COND</span></div>
+              </div>
+              <div class="item-detail">Review proximity to intersections (60 ft min), existing curb cuts, collector/arterial access restrictions, and street hierarchy. Confirm access can meet code before design proceeds.</div>
+              <div class="item-code">§18.160.110(B)(1)</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PHASE 1: APPLICATION INTAKE
+    ══════════════════════════════════ -->
+    <div class="phase-panel" id="phase-1">
+      <div class="phase-header">
+        <div class="phase-title-area">
+          <div class="phase-number-badge">Phase 2 of 9</div>
+          <div class="phase-title">Application Intake</div>
+          <div class="phase-desc">Completeness review, submittal requirements, fee collection, and routing. Per CMC §18.405.</div>
+        </div>
+        <div class="phase-stats">
+          <div class="stat-box"><div class="stat-num" id="ph1-done" style="color:var(--green)">0</div><div class="stat-label">Done</div></div>
+          <div class="stat-box"><div class="stat-num" id="ph1-total" style="color:var(--text-muted)">0</div><div class="stat-label">Total</div></div>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <button class="filter-btn active" onclick="setFilter(this,'all')">All</button>
+        <button class="filter-btn f-planning" onclick="setFilter(this,'planning')">Planning</button>
+        <button class="filter-btn f-transport" onclick="setFilter(this,'transport')">Transportation</button>
+        <button class="filter-btn" onclick="setFilter(this,'required')">Required Only</button>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--shared-color)">Both Divisions</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-shared">INTAKE</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-tags="shared required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Verify application completeness (planning division checklist)</div><div class="item-tags"><span class="tag tag-shared">Both</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Application must include all items identified in the planning division submittal checklist plus all applicable fees. Incomplete applications are not accepted.</div>
+              <div class="item-code">§18.402.020(B)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="shared required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Collect all applicable fees per Master Fee Schedule</div><div class="item-tags"><span class="tag tag-shared">Both</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Planning fees, engineering review fees, CEQA fees, and any special study deposits collected at intake.</div>
+              <div class="item-code">§18.402.020(B)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="shared required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Route application to all required departments for concurrent review</div><div class="item-tags"><span class="tag tag-shared">Both</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Multiple permit applications for the same project must be filed and processed concurrently by the highest level of required authority. Route to Engineering, Fire, Building, Public Works, etc.</div>
+              <div class="item-code">§18.405.020</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Verify neighborhood meeting requirement</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">Required for projects in Affordable Housing Overlay District (§18.115.090) and other major discretionary projects. Must be completed before or during processing.</div>
+              <div class="item-code">§18.405.050(B) | §18.115.090</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Issue completeness letter with issues of concern</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">After receipt, provide applicant written letter identifying project issues and compliance procedures. Required by Permit Streamlining Act.</div>
+              <div class="item-code">§18.402.020(C) | Gov. Code §65920</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="shared required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Initiate CEQA review — determine exemption status or document type</div><div class="item-tags"><span class="tag tag-shared">Both</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">After accepting complete application, determine: (1) Is it a CEQA project? (2) Is it categorically/statutorily exempt? (3) Does it need ND/MND/EIR? Initiate environmental review per CEQA guidelines.</div>
+              <div class="item-code">§18.515.010 | Cal. Public Resources Code §21000</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PHASE 2: ZONING & LAND USE
+    ══════════════════════════════════ -->
+    <div class="phase-panel" id="phase-2">
+      <div class="phase-header">
+        <div class="phase-title-area">
+          <div class="phase-number-badge">Phase 3 of 9</div>
+          <div class="phase-title">Zoning &amp; Land Use Analysis</div>
+          <div class="phase-desc">Confirm permitted uses, density/FAR compliance, overlay requirements, and design review applicability per CMC §18.25, §18.30–18.65, §18.100–18.115.</div>
+        </div>
+        <div class="phase-stats">
+          <div class="stat-box"><div class="stat-num" id="ph2-done" style="color:var(--green)">0</div><div class="stat-label">Done</div></div>
+          <div class="stat-box"><div class="stat-num" id="ph2-total" style="color:var(--text-muted)">0</div><div class="stat-label">Total</div></div>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <button class="filter-btn active" onclick="setFilter(this,'all')">All</button>
+        <button class="filter-btn f-planning" onclick="setFilter(this,'planning')">Planning</button>
+        <button class="filter-btn f-transport" onclick="setFilter(this,'transport')">Transportation</button>
+        <button class="filter-btn" onclick="setFilter(this,'required')">Required Only</button>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--planning-color)">Planning Division — Land Use</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-planning">ZONING</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Confirm use is allowed in the zoning district (permitted, AP, MP, or UP)</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Check Tables 18.30.020–18.50.020 for permit type: Permitted (P), Administrative Permit (AP), Minor Use Permit (MP), Use Permit (UP), or Not Allowed (–). Apply any applicable footnotes.</div>
+              <div class="item-code">§18.25.030 | §18.25.020(A)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Verify density and FAR compliance for the district</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Calculate using net acres (exclude ROW, easements, floodways). Confirm against district maximums: RR &lt;2.5 du/acre, RL/RS 2.5–10, RM 11–32, RH 33–100, commercial FAR per district.</div>
+              <div class="item-code">§18.15.020 — Table 18.15.020 | §18.150.030</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Check for lots divided by district boundaries</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Where a lot is split by a zoning boundary, regulations of each district apply to their respective area. If &gt;60% in one district, UP may allow exception (§18.15.040).</div>
+              <div class="item-code">§18.15.040</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Review overlay district requirements (Airport, Transit Station, Cannabis, AH)</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">Airport Overlay (§18.100): height, noise, safety. Transit Station Overlay (§18.105): parking maximums, pedestrian-oriented design, BART proximity reductions. Cannabis (§18.110) and Affordable Housing (§18.115) overlays if applicable.</div>
+              <div class="item-code">§18.100–§18.115</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Confirm site is a legally created parcel</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Development may only occur on legally created parcels. Review subdivision history if lot legality is in question.</div>
+              <div class="item-code">§18.25.020(D)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Evaluate nonconforming use / structure status</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">If existing structure or use is nonconforming, apply §18.530 (Nonconforming Uses/Structures) and §18.535 (Nonconforming Physical Improvements). Expansions may trigger full compliance.</div>
+              <div class="item-code">§18.530 | §18.535</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Check Standards for Specific Uses (Division V) if applicable</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">Uses with a section reference in the allowed use tables must comply with Division V standards (§18.200–§18.210), including wireless facilities, adult businesses, drive-throughs, etc.</div>
+              <div class="item-code">§18.25.030(C)(1) | §18.200–§18.210</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Apply Affordable Housing requirements if residential</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">Check §18.185 for inclusionary requirements. If density bonus requested, process concurrently with primary application and evaluate incentives/concessions under §18.115.070.</div>
+              <div class="item-code">§18.185 | §18.115</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PHASE 3: TRANSPORTATION REVIEW
+    ══════════════════════════════════ -->
+    <div class="phase-panel" id="phase-3">
+      <div class="phase-header">
+        <div class="phase-title-area">
+          <div class="phase-number-badge">Phase 4 of 9</div>
+          <div class="phase-title">Transportation Review</div>
+          <div class="phase-desc">Comprehensive transportation engineering review covering traffic impact, access, parking, bicycle, pedestrian, and loading. Primary Transportation Division responsibility per CMC §18.160, §18.150.</div>
+        </div>
+        <div class="phase-stats">
+          <div class="stat-box"><div class="stat-num" id="ph3-done" style="color:var(--green)">0</div><div class="stat-label">Done</div></div>
+          <div class="stat-box"><div class="stat-num" id="ph3-total" style="color:var(--text-muted)">0</div><div class="stat-label">Total</div></div>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <button class="filter-btn active" onclick="setFilter(this,'all')">All</button>
+        <button class="filter-btn" onclick="setFilter(this,'required')">Required Only</button>
+        <button class="filter-btn" onclick="setFilter(this,'conditional')">Conditional Only</button>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--transport-color)">Traffic Impact &amp; Access</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-transport">§18.160.110</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-tags="transport conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Review Traffic Impact Study (if required) — methodology and findings</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">Review trip generation, distribution, LOS analysis, and mitigation measures. Confirm study scope meets City standards and addresses cumulative impacts.</div>
+              <div class="item-code">§18.160.110(A)(2)(a) | City Traffic Study Guidelines</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Verify driveway count: max 2 driveways per frontage for multi/non-residential</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Multi-family and nonresidential: no more than 2 driveways on same frontage unless traffic study justifies more. City Engineer approves any exception.</div>
+              <div class="item-code">§18.160.110(A)(2)(a)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Access directed to lowest-volume street where multiple streets available</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Where property has access to more than one street, direct access to lowest volume street to minimize traffic impacts. Document in project conditions.</div>
+              <div class="item-code">§18.160.110(A)(2)(b)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Driveway setback from corner: minimum 60 ft from nearest intersection</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Measured from centerline of driveway to face of curb of intersecting street. Greater distance may be required by City Engineer for collector/arterial streets.</div>
+              <div class="item-code">§18.160.110(B)(1)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Driveway spacing: 28 ft minimum between driveways on same frontage</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">SFR: 28 ft separation (shared driveway may be approved by City Engineer). Multi/Nonresidential: 28 ft minimum between centerlines. Exceptions require City Engineer approval.</div>
+              <div class="item-code">§18.160.110(B)(2)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Driveway width per Table 18.160.110 — max 30 ft for multi/non-residential</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Verify driveway widths meet minimums per Table 18.160.110. Maximum driveway width is 30 feet, exclusive of median divider width.</div>
+              <div class="item-code">§18.160.110(A)(2)(c)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Median strip required for parking areas serving &gt;25 vehicles</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">Entrance to parking area accommodating more than 25 vehicles shall include a median strip to eliminate cross-traffic within 50 ft of ROW. Design subject to City Engineer approval.</div>
+              <div class="item-code">§18.160.110(B)(5)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">All parking spaces accessible without re-entering public ROW</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Parking facility design must allow access to all spaces without returning to a public right-of-way. Alleys may be used as maneuvering space. Exception requires UP and physical impossibility finding.</div>
+              <div class="item-code">§18.160.110(B)(3)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--transport-color)">Parking Count &amp; Design</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-transport">§18.160.040</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-tags="transport required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Calculate required parking spaces per Chapter 18.160 tables</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Apply use-specific parking ratios from §18.160.040. For changes/expansions, calculate additional spaces required. Use cannot commence or structure occupied until parking is completed and approved.</div>
+              <div class="item-code">§18.160.040 | §18.160.020</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Apply BART proximity parking reduction (within ½ mile of BART station)</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">Sites within ½ mile of a BART station may qualify for reduced parking per §18.160.050. Transit Station Overlay also caps maximum number of parking spaces (§18.105).</div>
+              <div class="item-code">§18.160.050 | §18.105</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Verify ADA-accessible parking requirements (count and placement)</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Minimum number of accessible spaces required per §18.160.070 and California Building Code. Van-accessible spaces, access aisles, and signage must comply with ADA and CBC requirements.</div>
+              <div class="item-code">§18.160.070 | ADA (42 U.S.C. §12101)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Verify parking lot design standards (stall dimensions, aisle widths, landscaping)</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Verify stall dimensions, drive aisle widths, surfacing, landscaping/screening, lighting, and drainage comply with §18.160.090 standards and §18.165 landscaping requirements.</div>
+              <div class="item-code">§18.160.090 | §18.160.100</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Evaluate garage/carport design for residential projects</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">Garages and carports must meet design and location requirements per §18.160.080. Check setbacks, access width, and relationship to primary structure.</div>
+              <div class="item-code">§18.160.080</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Bicycle parking requirements — short and long-term</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Provide safe and convenient bicycle parking per §18.160.120. Check required number, type (short-term/long-term), and placement. Near-BART projects must provide additional bicycle facilities.</div>
+              <div class="item-code">§18.160.120</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Off-street loading area requirements for commercial/industrial uses</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">Commercial and industrial uses must provide off-street loading per §18.160.150. Verify loading berth size, number, location, and access does not conflict with parking or pedestrian areas.</div>
+              <div class="item-code">§18.160.150</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--transport-color)">Frontage, ROW &amp; Sight Distance</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-transport">§18.150</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-tags="transport required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Determine frontage improvements required by City Engineer</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">City Engineer determines required curbs, gutters, sidewalks, street paving, lighting, storm drains, and sanitary sewers based on General Plan/master plan. Applies to ALL planning permits.</div>
+              <div class="item-code">§18.150.050(B)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Require ROW/easement dedication for frontage improvements</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Applicant must dedicate all necessary public ROW and/or easements for frontage improvements. City Engineer certifies installation prior to planning permit approval or requires performance bond.</div>
+              <div class="item-code">§18.150.050(C)(1–3)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Verify sight visibility triangle compliance at intersections and driveways</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Fences, walls, landscaping, and structures within sight visibility triangle must comply with §18.150.170. Fences in sight triangle limited to 3 ft height per §18.150.040(C)(1).</div>
+              <div class="item-code">§18.150.170 | §18.150.040(C)(1)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PHASE 4: DEVELOPMENT STANDARDS
+    ══════════════════════════════════ -->
+    <div class="phase-panel" id="phase-4">
+      <div class="phase-header">
+        <div class="phase-title-area">
+          <div class="phase-number-badge">Phase 5 of 9</div>
+          <div class="phase-title">Development Standards</div>
+          <div class="phase-desc">Site design standards covering setbacks, height, grading, landscaping, lighting, outdoor storage, solid waste, and design/site review applicability per CMC §18.150–§18.180.</div>
+        </div>
+        <div class="phase-stats">
+          <div class="stat-box"><div class="stat-num" id="ph4-done" style="color:var(--green)">0</div><div class="stat-label">Done</div></div>
+          <div class="stat-box"><div class="stat-num" id="ph4-total" style="color:var(--text-muted)">0</div><div class="stat-label">Total</div></div>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <button class="filter-btn active" onclick="setFilter(this,'all')">All</button>
+        <button class="filter-btn f-planning" onclick="setFilter(this,'planning')">Planning</button>
+        <button class="filter-btn f-transport" onclick="setFilter(this,'transport')">Transportation</button>
+        <button class="filter-btn" onclick="setFilter(this,'required')">Required Only</button>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--planning-color)">Planning Division — Site Design</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-planning">§18.150</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Verify setback compliance per district standards</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Setbacks measured from edge of ROW/easement. Check front, side, rear setbacks against applicable district table. Transitional requirements (§18.150.180) apply where residential abuts non-residential.</div>
+              <div class="item-code">§18.150.140 | §18.150.180</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Confirm height limit compliance and check for exceptions</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Apply height limits per district. Check mechanical equipment screening (§18.150.080) — equipment must be screened from view. Airport Overlay height restrictions (§18.100) may apply.</div>
+              <div class="item-code">§18.150.070 | §18.150.080 | §18.100</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Verify design and site review is required and triggered (§18.415.020)</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Required for: any new construction/alteration, landscaping changes, tenant improvements in non-conforming buildings, new/altered parking lots, sign programs, creek-adjacent improvements, SFR additions, and storage/staging.</div>
+              <div class="item-code">§18.415.020(A)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Apply Objective Design Standards (§18.152) if ministerial review</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">For ministerial design review (SB 35, Housing Accountability Act projects), apply only objective design standards. Cannot impose subjective requirements.</div>
+              <div class="item-code">§18.152 | §18.415.075</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Open space/recreational facility requirements for residential</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">Residential development must provide open space per §18.150.100. Stormwater treatment features may not count. Must be outside setbacks adjacent to public street and 15 ft from windows.</div>
+              <div class="item-code">§18.150.100</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Landscaping compliance — Chapter 18.165 and Water Efficient Landscaping</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Check landscaping standards (§18.165) including buffering, parking lot landscaping, and screening. Water Efficient Landscaping requirements (§18.170) apply — comply with MWELO for projects over threshold.</div>
+              <div class="item-code">§18.165 | §18.170</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Outdoor lighting compliance and glare avoidance</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Exterior lighting must comply with §18.150.110 — must provide safe illumination without off-site glare. Near-BART projects must provide pedestrian-scale secure nighttime lighting.</div>
+              <div class="item-code">§18.150.110 | §18.105 (Transit Overlay)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Solid waste/recycling storage enclosure requirements</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">All new development must provide adequate solid waste and recycling storage per §18.150.150. Verify enclosure design, location, and screening meets standards.</div>
+              <div class="item-code">§18.150.150</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Sign review — sign plan or master sign program required</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">New signs require building permit and sign plan (§18.180.030). Master sign programs required for multi-tenant centers. Signs in Transit Overlay must be pedestrian-scaled, not motorist-oriented.</div>
+              <div class="item-code">§18.180 | §18.415.020(A)(5)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--transport-color)">Engineering / Grading &amp; Stormwater</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-transport">§18.150 | §18.175</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-tags="transport conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Grading permit review — design/site review required before grading permit</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">Planning division design/site review approval required before grading permit issuance. Exemptions: &lt;200 CY if no hauling and not in hillside/creek areas, or previously approved grading plan.</div>
+              <div class="item-code">§18.150.060(B–C)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Stormwater C.3 compliance — require Stormwater Control Plan if threshold met</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Any project creating/adding/replacing impervious surface meeting NPDES permit threshold must submit a Stormwater Control Plan per Contra Costa Clean Water Program C.3 Guidebook. Otherwise comply with CMC §16.05.</div>
+              <div class="item-code">§18.175.010 | CMC §16.05</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PHASE 5: RESOURCE & ENVIRONMENT
+    ══════════════════════════════════ -->
+    <div class="phase-panel" id="phase-5">
+      <div class="phase-header">
+        <div class="phase-title-area">
+          <div class="phase-number-badge">Phase 6 of 9</div>
+          <div class="phase-title">Resource &amp; Environmental</div>
+          <div class="phase-desc">Hillside protection, creek/riparian buffers, tree preservation, and CEQA environmental review per CMC §18.300–§18.310, §18.515.</div>
+        </div>
+        <div class="phase-stats">
+          <div class="stat-box"><div class="stat-num" id="ph5-done" style="color:var(--green)">0</div><div class="stat-label">Done</div></div>
+          <div class="stat-box"><div class="stat-num" id="ph5-total" style="color:var(--text-muted)">0</div><div class="stat-label">Total</div></div>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <button class="filter-btn active" onclick="setFilter(this,'all')">All</button>
+        <button class="filter-btn f-planning" onclick="setFilter(this,'planning')">Planning</button>
+        <button class="filter-btn" onclick="setFilter(this,'required')">Required Only</button>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--planning-color)">Hillside Protection (§18.300)</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-planning">HILLSIDE</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Determine if site is a "hillside parcel" (average slope ≥15%)</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">If slope ≥15%, Chapter 18.300 applies to subdivisions, new uses, structures, and additions &gt;50% of existing size. Chapter 18.300 prevails over other Development Code provisions in conflicts.</div>
+              <div class="item-code">§18.300.020</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Require Hillside Development Use Permit (HDP) and Soils Report with Peer Review</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">Hillside parcels require an HDP (§18.300.040) and soils report with city peer review (§18.300.060). Development must minimize hillside impacts, complement topography, and mitigate landslide/erosion risks.</div>
+              <div class="item-code">§18.300.040 | §18.300.050 | §18.300.060</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--planning-color)">Creek &amp; Riparian Habitat (§18.305)</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-planning">CREEK</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Check if site is adjacent to or crossed by a watercourse (GP map / USGS blue line)</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">§18.305 applies if site is adjacent to/crossed by watercourse shown on GP map or USGS 7.5-min quadrangle, or within FEMA floodplain. Design and Site Development Permit required in addition to other permits.</div>
+              <div class="item-code">§18.305.020 | §18.415.020(A)(6)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Require Hydrologic Study and apply creek buffer development standards</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">Hydrologic study required for all creek-adjacent applications. Development must establish adequate buffer areas, protect water quality/habitat, preserve riparian habitat, and maintain wildlife corridors per §18.305.040.</div>
+              <div class="item-code">§18.305.030 | §18.305.040</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--planning-color)">Tree Preservation (§18.310)</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-planning">TREES</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Identify all protected trees on site (native trees ≥12 in. DBH, heritage trees)</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">Applies when removal/relocation of protected trees is associated with a planning permit. Protected trees include: native trees ≥12 in. DBH (measured at 54 in.), groves of mature trees, and heritage trees per CMC §8.40.</div>
+              <div class="item-code">§18.310.020(A)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Require Arborist Report, TPZ standards, and Replacement Trees</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">Arborist report (§18.310.040) required. Establish Tree Protection Zone (TPZ) during construction (§18.310.050). Specify replacement trees per §18.310.060 as condition of approval.</div>
+              <div class="item-code">§18.310.040 | §18.310.050 | §18.310.060</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--shared-color)">CEQA Environmental Review</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-shared">§18.515</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-tags="shared required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Complete CEQA review — confirm exemption or prepare ND/MND/EIR</div><div class="item-tags"><span class="tag tag-shared">Both</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">After complete application: determine if CEQA project, check for categorical/statutory exemption. If not exempt: prepare Initial Study, determine if ND, MND, or EIR required. Transportation section provides VMT/traffic data.</div>
+              <div class="item-code">§18.515.010 | PRC §21000</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Transportation section: provide VMT analysis input for CEQA</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">Per SB 743 (2013), VMT (vehicle miles traveled) is now the CEQA transportation metric, replacing LOS. Transportation Division provides VMT data, screening, and mitigation measures for CEQA document.</div>
+              <div class="item-code">§18.515 | CEQA Guidelines §15064.3</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PHASE 6: PERMIT TYPE & AUTHORITY
+    ══════════════════════════════════ -->
+    <div class="phase-panel" id="phase-6">
+      <div class="phase-header">
+        <div class="phase-title-area">
+          <div class="phase-number-badge">Phase 7 of 9</div>
+          <div class="phase-title">Permit Type &amp; Authority</div>
+          <div class="phase-desc">Determine correct permit type, review authority, hearing requirements, and findings. Per CMC §18.400–§18.460.</div>
+        </div>
+        <div class="phase-stats">
+          <div class="stat-box"><div class="stat-num" id="ph6-done" style="color:var(--green)">0</div><div class="stat-label">Done</div></div>
+          <div class="stat-box"><div class="stat-num" id="ph6-total" style="color:var(--text-muted)">0</div><div class="stat-label">Total</div></div>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <button class="filter-btn active" onclick="setFilter(this,'all')">All</button>
+        <button class="filter-btn f-planning" onclick="setFilter(this,'planning')">Planning</button>
+        <button class="filter-btn" onclick="setFilter(this,'required')">Required Only</button>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--planning-color)">Permit Determination</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-planning">§18.400</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Confirm: Zoning Clearance (ZC) — ministerial, staff level</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Use for permitted uses (P) requiring only code compliance verification. No discretionary conditions. Issued over the counter or by staff review.</div>
+              <div class="item-code">§18.410</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Confirm: Administrative Permit (AP) — staff approval, AP uses in tables</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Administrative permits for uses designated "AP" in use tables. Staff-level discretionary approval. May include design/site review requirements.</div>
+              <div class="item-code">§18.420 | §18.25.030(B)(2)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Confirm: Minor Use Permit (MUP) — Zoning Administrator hearing</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">For uses designated "MP" in use tables. Zoning Administrator holds hearing and makes decision. May be appealed to Planning Commission. Also handles minor exceptions and minor subdivisions.</div>
+              <div class="item-code">§18.435 | §18.15.050(A)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Confirm: Use Permit (UP) — Planning Commission hearing</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">For uses designated "UP" in use tables. Planning Commission public hearing and decision. Staff report required per §18.405.080. Multiple permits processed at highest authority level.</div>
+              <div class="item-code">§18.435 | §18.405.020</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Variance — for deviations from development standards (not use)</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">Variances allow deviations from numerical standards (setbacks, height, coverage) where strict application would create unusual hardship due to special circumstances. Cannot vary use. Zoning Administrator or PC per §18.430.</div>
+              <div class="item-code">§18.430</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Planned Development Use Permit (PDUP) — complex mixed/large projects</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">For large or mixed-use projects requiring coordinated planning. Allows modified development standards with approved PDUP. Planning Commission or City Council review per §18.440.</div>
+              <div class="item-code">§18.440</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Hillside Development Use Permit (HDP) — if hillside parcel triggered</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">Required for all development on hillside parcels (slope ≥15%). Separate permit in addition to other required permits. Includes HDP findings, design criteria, and soils review.</div>
+              <div class="item-code">§18.445 | §18.300</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Historic Preservation review — if property is historic or in historic district</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">Any alteration to a historic structure or property in a historic district requires review per §18.450. Consult Historic Preservation Commission as required.</div>
+              <div class="item-code">§18.450</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Prepare Staff Report and draft conditions of approval</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Staff report evaluating all permit criteria, findings, conditions, and CEQA document per §18.405.080. Coordinate with Transportation Division for transportation-related conditions.</div>
+              <div class="item-code">§18.405.080</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PHASE 7: CONDITIONS & CLOSEOUT
+    ══════════════════════════════════ -->
+    <div class="phase-panel" id="phase-7">
+      <div class="phase-header">
+        <div class="phase-title-area">
+          <div class="phase-number-badge">Phase 8 of 9</div>
+          <div class="phase-title">Conditions &amp; Closeout</div>
+          <div class="phase-desc">Post-approval implementation, performance guarantees, public hearings, appeals window, and permit implementation. Per CMC §18.500–§18.525.</div>
+        </div>
+        <div class="phase-stats">
+          <div class="stat-box"><div class="stat-num" id="ph7-done" style="color:var(--green)">0</div><div class="stat-label">Done</div></div>
+          <div class="stat-box"><div class="stat-num" id="ph7-total" style="color:var(--text-muted)">0</div><div class="stat-label">Total</div></div>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <button class="filter-btn active" onclick="setFilter(this,'all')">All</button>
+        <button class="filter-btn f-planning" onclick="setFilter(this,'planning')">Planning</button>
+        <button class="filter-btn f-transport" onclick="setFilter(this,'transport')">Transportation</button>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--shared-color)">Post-Approval Steps</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-shared">§18.500+</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Public hearing conducted per §18.500 — noticing, procedure, findings</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">For discretionary approvals requiring public hearing: confirm proper noticing (mailing, posting, publication), conduct hearing, make required findings, and memorialize decision with conditions of approval.</div>
+              <div class="item-code">§18.500 | §18.405.080</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Appeals window — confirm no appeal filed within the allowed period</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Appeals and calls for review per §18.510. Allow appeal period to lapse before project proceeds. Track any appeals; coordinate escalation to next authority if filed.</div>
+              <div class="item-code">§18.510</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="shared required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Require performance bond/guarantee for uncompleted improvements</div><div class="item-tags"><span class="tag tag-shared">Both</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">City Engineer must certify frontage improvements are installed, or applicant must provide contractual arrangements supported by a proper bond. Performance guarantees per §18.520 for other approved work.</div>
+              <div class="item-code">§18.150.050(C)(3) | §18.520.020</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="shared conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Record Covenant of Easement if required (e.g., creek maintenance)</div><div class="item-tags"><span class="tag tag-shared">Both</span><span class="tag tag-conditional">COND</span></div></div>
+              <div class="item-detail">For creek properties and other conditions requiring long-term maintenance, record a Covenant of Easement or maintenance agreement per §18.525 and §18.305.060 (creek maintenance).</div>
+              <div class="item-code">§18.525 | §18.305.060</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Track permit expiration, time limits, and condition compliance</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Monitor permit implementation deadlines, time limits, and extension eligibility per §18.505. Ensure conditions of approval are fulfilled. Building permits must not be issued without prior planning approval.</div>
+              <div class="item-code">§18.505 | §18.25.020(B)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="transport required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">City Engineer certifies frontage improvements installed before permit finalization</div><div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">City Engineer must certify that all required frontage improvements have been installed before a planning permit is approved — or confirm adequate bond/contractual arrangements are in place.</div>
+              <div class="item-code">§18.150.050(C)(3)</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+
+          <div class="checklist-item" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top"><div class="item-title">Property maintenance responsibilities communicated to applicant</div><div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div></div>
+              <div class="item-detail">Property owners are responsible for maintaining and repairing frontage improvements per state law (§18.150.050(D)). Property maintenance standards per §18.520.030. Include in conditions of approval.</div>
+              <div class="item-code">§18.150.050(D) | §18.520.030</div>
+            </div>
+            <div class="item-actions"><button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button><button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button><button class="action-btn" onclick="addNote(event, this)">✎ Note</button></div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PHASE 8: SUMMARY
+    ══════════════════════════════════ -->
+    <div class="phase-panel" id="phase-8">
+      <div class="phase-header">
+        <div class="phase-title-area">
+          <div class="phase-number-badge">Phase 9 of 9</div>
+          <div class="phase-title">Title 19 — Fees &amp; Programs</div>
+          <div class="phase-desc">Development-related fees and city programs applicable to planning review. Covers engineering fees (§19.05), child care program (§19.10), park land requirements (§19.15–19.20), off-site street improvement fees (§19.25–19.30), TDM (§19.35), and residential tenant protection programs (§19.40–19.50).</div>
+        </div>
+        <div class="phase-stats">
+          <div class="stat-box">
+            <div class="stat-num" id="ph8-done" style="color:var(--green)">0</div>
+            <div class="stat-label">Done</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="ph8-total" style="color:var(--text-muted)">0</div>
+            <div class="stat-label">Total</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <button class="filter-btn active" onclick="setFilter(this,'all')">All</button>
+        <button class="filter-btn f-planning" onclick="setFilter(this,'planning')">Planning</button>
+        <button class="filter-btn f-transport" onclick="setFilter(this,'transport')">Transportation</button>
+        <button class="filter-btn" onclick="setFilter(this,'required')">Required Only</button>
+        <button class="filter-btn" onclick="setFilter(this,'conditional')">Conditional</button>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--transport-color)">Engineering Fees</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-transport">ENG FEES</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-id="19-1" data-tags="transport required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Collect engineering & inspection fees at time of work commencement</div>
+                <div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-required">REQ</span></div>
+              </div>
+              <div class="item-detail">Applicable fees for subdivision, surveying, reversion to acreage, and construction inspection shall be paid per the Resolution Establishing Fees and Charges before work begins.</div>
+              <div class="item-code">§19.05.010–19.05.050 | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+          <div class="checklist-item" data-id="19-2" data-tags="transport required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Collect engineering analysis review charge for use permit or tentative map</div>
+                <div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-required">REQ</span></div>
+              </div>
+              <div class="item-detail">Engineering analysis review fee is due at time of filing for use permit or tentative map (whichever first). If neither required, fee due at building permit application.</div>
+              <div class="item-code">§19.05.030, §19.05.050 | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--planning-color)">Child Care Program</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-planning">CHILD CARE</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-id="19-3" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Assess Child Care Program fee (0.5% of development cost) at C of O</div>
+                <div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div>
+              </div>
+              <div class="item-detail">Non-residential and non-multifamily projects pay 0.5% of total development cost at time of certificate of occupancy issuance. Fee funds Concord Child Care Program.</div>
+              <div class="item-code">§19.10.030 | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+          <div class="checklist-item" data-id="19-4" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Verify Child Care fee exemptions (multifamily residential exempt)</div>
+                <div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div>
+              </div>
+              <div class="item-detail">Multifamily residential projects are exempt from Child Care fee. Confirm project type before assessing.</div>
+              <div class="item-code">§19.10.020 | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--planning-color)">Park Land Requirements</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-planning">PARK LAND</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-id="19-5" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Determine park land dedication or in-lieu fee for residential development</div>
+                <div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div>
+              </div>
+              <div class="item-detail">Residential projects must dedicate park land, pay fee in lieu, or both. Planning Commission decides which based on GP Recreation Element, topography, size, and park availability.</div>
+              <div class="item-code">§19.15.020, §19.15.060 | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+          <div class="checklist-item" data-id="19-6" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Calculate park land fee by density classification</div>
+                <div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div>
+              </div>
+              <div class="item-detail">Very low/low density: 697 sq ft/unit; Medium: 479 sq ft/unit; High: 414 sq ft/unit; Downtown/senior/special needs: 305 sq ft/unit. Based on 5 acres per 1,000 persons standard.</div>
+              <div class="item-code">§19.15.030–19.15.040 | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+          <div class="checklist-item" data-id="19-7" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Apply 50% credit for affordable housing units</div>
+                <div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div>
+              </div>
+              <div class="item-detail">Newly constructed, remodeled, or converted affordable housing units held under a regulatory agreement qualify for 50% credit of applicable in-lieu park land fee.</div>
+              <div class="item-code">§19.15.040(4) | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+          <div class="checklist-item" data-id="19-8" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Apply density bonus exemption for bonus units</div>
+                <div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div>
+              </div>
+              <div class="item-detail">Park land requirements shall not be imposed on units approved in addition to base zoning as part of an approved density bonus/affordable housing program.</div>
+              <div class="item-code">§19.15.040(2) | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+          <div class="checklist-item" data-id="19-9" data-tags="planning required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Collect park land in-lieu fee at building permit (or final map for 5+ lots)</div>
+                <div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-required">REQ</span></div>
+              </div>
+              <div class="item-detail">Fee paid at building permit issuance; for subdivisions of 5 or more lots, fee paid at final map approval. Fee amount set by Resolution Establishing Fees and Charges.</div>
+              <div class="item-code">§19.15.050 | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+          <div class="checklist-item" data-id="19-10" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Evaluate private park land credit (max 25%) for planned developments</div>
+                <div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div>
+              </div>
+              <div class="item-detail">Private park/recreation area in planned development may receive up to 25% credit if PC and CC find public interest served; requires minimum 3-acre improved active recreation area.</div>
+              <div class="item-code">§19.15.080 | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--transport-color)">Off-Site Streets & TIF</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-transport">STREETS/TIF</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-id="19-11" data-tags="transport required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Assess off-site street improvement fee per Traffic Impact Fee Study</div>
+                <div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-required">REQ</span></div>
+              </div>
+              <div class="item-detail">Projects citywide (except Concord Reuse Project site) must pay off-site street improvement fee as established by 2013 Citywide Traffic Impact Fee Study and GP Transportation Element.</div>
+              <div class="item-code">§19.25.010–19.25.040 | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+          <div class="checklist-item" data-id="19-12" data-tags="both required" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Confirm General Plan consistency as condition of any discretionary approval</div>
+                <div class="item-tags"><span class="tag tag-both">TRA+Plan</span><span class="tag tag-required">REQ</span></div>
+              </div>
+              <div class="item-detail">Approval of any zoning, use permit, variance, ZA permit, subdivision map, or building permit requires determination that project is consistent with GP. Approving body may impose conditions.</div>
+              <div class="item-code">§19.25.050 | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+          <div class="checklist-item" data-id="19-13" data-tags="transport conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Identify additional transportation improvements from TIA/TIS</div>
+                <div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-conditional">COND</span></div>
+              </div>
+              <div class="item-detail">If project-specific TIA identifies needed transportation improvements beyond standard fee program, determine fair-share nexus and incorporate as project conditions per P&P No. 144.</div>
+              <div class="item-code">§19.30.010 | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--both-color)">Transportation Demand Management</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-both">TDM</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-id="19-14" data-tags="both conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Incorporate TDM goals into land use review and conditions of approval</div>
+                <div class="item-tags"><span class="tag tag-both">TRA+Plan</span><span class="tag tag-conditional">COND</span></div>
+              </div>
+              <div class="item-detail">Transportation Demand Management goals (transit, ridesharing, bicycling, telecommuting) should be incorporated into the land use review process and project conditions where appropriate.</div>
+              <div class="item-code">§19.35.030(a)(2), (c)(2) | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+          <div class="checklist-item" data-id="19-15" data-tags="transport conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Coordinate with TRANSPAC for regional TDM compliance</div>
+                <div class="item-tags"><span class="tag tag-transport">TRA</span><span class="tag tag-conditional">COND</span></div>
+              </div>
+              <div class="item-detail">Staff should work with TRANSPAC (Central Contra Costa Transportation Committee) to implement Measure C TDM goals and Countywide Comprehensive Transportation Plan requirements.</div>
+              <div class="item-code">§19.35.020(d)–(h), §19.35.030(c)(1) | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-group-header" onclick="toggleGroup(this)">
+          <span class="section-group-title" style="color:var(--planning-color)">Residential Tenant Programs</span>
+          <div class="section-group-line"></div>
+          <span class="section-group-badge tag tag-planning">TENANT PROT.</span>
+          <span class="section-group-toggle">▼</span>
+        </div>
+        <div class="items-wrap">
+          <div class="checklist-item" data-id="19-16" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Identify if project involves residential rental units subject to rent stabilization</div>
+                <div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div>
+              </div>
+              <div class="item-detail">Covered rental units (not exempted by §19.40.020) are subject to rent stabilization capping annual increases at 5% of lawful rent beginning April 1, 2025. Unit must also be registered.</div>
+              <div class="item-code">§19.40.020, §19.40.040 | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+          <div class="checklist-item" data-id="19-17" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Confirm new residential units (C of O after Feb 1, 1995) are exempt from rent stabilization</div>
+                <div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div>
+              </div>
+              <div class="item-detail">Dwelling units with a C of O issued after February 1, 1995 are exempt from rent stabilization provisions but remain subject to just-cause-for-eviction requirements.</div>
+              <div class="item-code">§19.40.020(2)(a) | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+          <div class="checklist-item" data-id="19-18" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Require landlord annual rent registry registration for covered units</div>
+                <div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div>
+              </div>
+              <div class="item-detail">All covered rental units must be registered through the City rent registry portal annually. Landlords delinquent in fees may not impose rent increases.</div>
+              <div class="item-code">§19.40.060 | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+          <div class="checklist-item" data-id="19-19" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Advise project applicant of just-cause-for-eviction requirements</div>
+                <div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div>
+              </div>
+              <div class="item-detail">All covered rental units require just cause for tenancy termination (for-cause or no-fault). No-fault terminations require relocation assistance (3× HUD FMR rent) and $3,000 moving stipend.</div>
+              <div class="item-code">§19.40.070–§19.40.080 | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+          <div class="checklist-item" data-id="19-20" data-tags="planning conditional" onclick="toggleCheck(this)">
+            <div class="item-checkbox"></div>
+            <div class="item-content">
+              <div class="item-top">
+                <div class="item-title">Verify anti-harassment ordinance notice is provided to tenants</div>
+                <div class="item-tags"><span class="tag tag-planning">Planning</span><span class="tag tag-conditional">COND</span></div>
+              </div>
+              <div class="item-detail">Landlords must not engage in harassment (access abuse, habitability failures, forced vacation tactics, discrimination, or privacy violations). City Attorney may enforce via injunctive action.</div>
+              <div class="item-code">§19.50.020–§19.50.040 | CMC Title 19</div>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn flag-btn" onclick="flagItem(event, this)">⚑ Flag</button>
+              <button class="action-btn na-btn" onclick="naItem(event, this)">N/A</button>
+              <button class="action-btn" onclick="addNote(event, this)">✎ Note</button>
+            </div>
+          </div>
+          <div class="item-note-wrap"><textarea class="item-note" placeholder="Add notes, comments, or follow-up actions..."></textarea></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="phase-panel" id="phase-9">
+      <div class="phase-header">
+        <div class="phase-title-area">
+          <div class="phase-number-badge">Summary View</div>
+          <div class="phase-title">Review Summary</div>
+          <div class="phase-desc">Overall progress, flagged items, and review status across all phases.</div>
+        </div>
+      </div>
+
+      <div class="summary-grid" id="summary-grid">
+        <!-- populated by JS -->
+      </div>
+
+      <div class="flags-list" id="flags-container">
+        <div class="flags-list-title">⚑ Flagged Items Requiring Attention</div>
+        <div id="flags-body"><div style="color:var(--text-dim);font-size:12px;font-family:'DM Mono',monospace;">No flagged items yet.</div></div>
+      </div>
+
+      <div style="background:var(--navy3);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;">
+        <div class="sidebar-label" style="margin-bottom:12px;">Review Notes / Summary</div>
+        <textarea id="summary-notes" style="width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:'Sora',sans-serif;font-size:12px;color:var(--text);min-height:120px;resize:vertical;outline:none;" placeholder="Add overall review notes, next steps, outstanding items, or case summary here..."></textarea>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════
+// STATE MANAGEMENT
+// ═══════════════════════════════════
+
+const PHASE_NAMES = [
+  'Pre-Application', 'Application Intake', 'Zoning & Land Use',
+  'Transportation Review', 'Development Standards', 'Resource & Environmental',
+  'Permit Type & Authority', 'Conditions & Closeout', 'Title 19 Fees & Programs'
+];
+
+let currentPhase = 0;
+let currentFilter = 'all';
+
+function getState() {
+  try { return JSON.parse(localStorage.getItem('devReviewState') || '{}'); } 
+  catch(e) { return {}; }
+}
+
+function saveState() {
+  // Collect all item states
+  const state = {};
+  document.querySelectorAll('.checklist-item').forEach((item, i) => {
+    const id = item.dataset.id;
+    if (id) {
+      state[id] = {
+        checked: item.classList.contains('checked'),
+        flagged: item.classList.contains('flagged'),
+        na: item.classList.contains('na'),
+        note: item.querySelector('.item-note')?.value || ''
+      };
+    }
+  });
+  // Project info
+  ['proj-name','proj-apn','proj-applicant','proj-date'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) state['__' + id] = el.value;
+  });
+  const summaryNotes = document.getElementById('summary-notes');
+  if (summaryNotes) state['__summary-notes'] = summaryNotes.value;
+  localStorage.setItem('devReviewState', JSON.stringify(state));
+}
+
+function loadState() {
+  const state = getState();
+  document.querySelectorAll('.checklist-item').forEach((item, i) => {
+    const id = item.dataset.id;
+    if (id && state[id]) {
+      const s = state[id];
+      if (s.checked) item.classList.add('checked');
+      if (s.flagged) item.classList.add('flagged');
+      if (s.na) item.classList.add('na');
+      setCheckboxIcon(item);
+      const noteInput = item.querySelector('.item-note');
+      if (noteInput && s.note) { 
+        noteInput.value = s.note;
+        if (s.note.trim()) item.classList.add('has-note');
+      }
+    }
+  });
+  ['proj-name','proj-apn','proj-applicant','proj-date'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && state['__' + id]) el.value = state['__' + id];
+  });
+  const summaryNotes = document.getElementById('summary-notes');
+  if (summaryNotes && state['__summary-notes']) summaryNotes.value = state['__summary-notes'];
+}
+
+// Assign unique IDs to items
+function assignItemIds() {
+  document.querySelectorAll('.checklist-item').forEach((item, i) => {
+    item.dataset.id = 'item_' + i;
+  });
+}
+
+// ═══════════════════════════════════
+// INTERACTION
+// ═══════════════════════════════════
+
+function setCheckboxIcon(item) {
+  const cb = item.querySelector('.item-checkbox');
+  if (item.classList.contains('checked')) { cb.textContent = '✓'; }
+  else if (item.classList.contains('flagged')) { cb.textContent = '⚑'; }
+  else if (item.classList.contains('na')) { cb.textContent = 'N/A'; }
+  else { cb.textContent = ''; }
+}
+
+function toggleCheck(item) {
+  if (item.classList.contains('flagged') || item.classList.contains('na')) return;
+  item.classList.toggle('checked');
+  setCheckboxIcon(item);
+  updateProgress();
+  saveState();
+  updateSummary();
+}
+
+function flagItem(e, btn) {
+  e.stopPropagation();
+  const item = btn.closest('.checklist-item');
+  item.classList.remove('checked', 'na');
+  item.classList.toggle('flagged');
+  setCheckboxIcon(item);
+  updateProgress();
+  saveState();
+  updateSummary();
+  showToast(item.classList.contains('flagged') ? '⚑ Item flagged for follow-up' : 'Flag removed');
+}
+
+function naItem(e, btn) {
+  e.stopPropagation();
+  const item = btn.closest('.checklist-item');
+  item.classList.remove('checked', 'flagged');
+  item.classList.toggle('na');
+  setCheckboxIcon(item);
+  updateProgress();
+  saveState();
+}
+
+function addNote(e, btn) {
+  e.stopPropagation();
+  const item = btn.closest('.checklist-item');
+  item.classList.toggle('has-note');
+  const noteWrap = item.nextElementSibling;
+  if (item.classList.contains('has-note')) {
+    noteWrap.querySelector('.item-note').focus();
+  }
+}
+
+function toggleGroup(header) {
+  const group = header.closest('.section-group');
+  group.classList.toggle('collapsed');
+}
+
+// ═══════════════════════════════════
+// PHASE NAVIGATION
+// ═══════════════════════════════════
+
+function switchPhase(idx, btn) {
+  currentPhase = idx;
+  document.querySelectorAll('.phase-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.phase-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('phase-' + idx).classList.add('active');
+  btn.classList.add('active');
+  if (idx === 8) updateSummary();
+  document.getElementById('main-content').scrollTop = 0;
+  window.scrollTo(0, 0);
+}
+
+// ═══════════════════════════════════
+// FILTER
+// ═══════════════════════════════════
+
+function setFilter(btn, filter) {
+  currentFilter = filter;
+  const panel = document.querySelector('.phase-panel.active');
+  if (!panel) return;
+  
+  // Update active filter btn in this panel
+  panel.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  
+  const items = panel.querySelectorAll('.checklist-item');
+  items.forEach(item => {
+    const tags = item.dataset.tags || '';
+    let show = true;
+    if (filter === 'planning') show = tags.includes('planning') || tags.includes('shared');
+    else if (filter === 'transport') show = tags.includes('transport') || tags.includes('shared');
+    else if (filter === 'required') show = tags.includes('required');
+    else if (filter === 'conditional') show = tags.includes('conditional');
+    item.style.display = show ? '' : 'none';
+    // Hide note wrap for hidden items
+    const noteWrap = item.nextElementSibling;
+    if (noteWrap && noteWrap.classList.contains('item-note-wrap')) {
+      noteWrap.style.display = show ? '' : 'none';
+    }
+  });
+}
+
+// ═══════════════════════════════════
+// PROGRESS
+// ═══════════════════════════════════
+
+function updateProgress() {
+  let totalDone = 0, totalItems = 0;
+  
+  for (let p = 0; p < 8; p++) {
+    const panel = document.getElementById('phase-' + p);
+    if (!panel) continue;
+    const items = panel.querySelectorAll('.checklist-item');
+    const counted = Array.from(items).filter(i => !i.classList.contains('na'));
+    const done = counted.filter(i => i.classList.contains('checked'));
+    totalItems += counted.length;
+    totalDone += done.length;
+    
+    const countEl = document.getElementById('count-' + p);
+    const pctEl = document.getElementById('pct-' + p);
+    if (countEl) countEl.textContent = counted.length + ' items';
+    if (pctEl) {
+      const pct = counted.length ? Math.round(done.length / counted.length * 100) : 0;
+      pctEl.textContent = pct > 0 ? pct + '% done' : '';
+    }
+    
+    // Phase stat boxes
+    const doneEl = document.getElementById('ph' + p + '-done');
+    const totEl = document.getElementById('ph' + p + '-total');
+    if (doneEl) doneEl.textContent = done.length;
+    if (totEl) totEl.textContent = counted.length;
+
+    // Phase nav icon
+    const phBtn = document.querySelector('.phase-btn[data-phase="' + p + '"]');
+    if (phBtn) {
+      const pct2 = counted.length ? done.length / counted.length : 0;
+      const numEl = phBtn.querySelector('.phase-num');
+      if (pct2 === 1 && done.length > 0) numEl.style.background = 'rgba(34,197,94,0.2)';
+      else if (pct2 > 0) numEl.style.background = 'rgba(0,94,184,0.25)';
+    }
+  }
+  
+  // Global progress
+  const pct = totalItems ? Math.round(totalDone / totalItems * 100) : 0;
+  document.getElementById('progress-text').textContent = totalDone + ' / ' + totalItems;
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+}
+
+// ═══════════════════════════════════
+// SUMMARY
+// ═══════════════════════════════════
+
+function updateSummary() {
+  const grid = document.getElementById('summary-grid');
+  if (!grid) return;
+  
+  let totTotal = 0, totDone = 0, totFlagged = 0, totNA = 0;
+  const phaseData = [];
+  
+  for (let p = 0; p < 8; p++) {
+    const panel = document.getElementById('phase-' + p);
+    const items = panel ? panel.querySelectorAll('.checklist-item') : [];
+    const total = items.length;
+    const done = Array.from(items).filter(i => i.classList.contains('checked')).length;
+    const flagged = Array.from(items).filter(i => i.classList.contains('flagged')).length;
+    const na = Array.from(items).filter(i => i.classList.contains('na')).length;
+    phaseData.push({ name: PHASE_NAMES[p], total, done, flagged, na });
+    totTotal += total;
+    totDone += done;
+    totFlagged += flagged;
+    totNA += na;
+  }
+  
+  const pct = totTotal ? Math.round(totDone / totTotal * 100) : 0;
+  grid.innerHTML = `
+    <div class="summary-card">
+      <div class="summary-card-label">Overall Progress</div>
+      <div class="summary-card-num" style="color:var(--green)">${pct}%</div>
+      <div class="summary-card-sub">${totDone} of ${totTotal} items checked</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-card-label">Flagged Items</div>
+      <div class="summary-card-num" style="color:var(--amber)">${totFlagged}</div>
+      <div class="summary-card-sub">Require follow-up or resolution</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-card-label">Marked N/A</div>
+      <div class="summary-card-num" style="color:var(--text-muted)">${totNA}</div>
+      <div class="summary-card-sub">Not applicable to this project</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-card-label">Remaining</div>
+      <div class="summary-card-num" style="color:var(--blue-light)">${totTotal - totDone - totNA}</div>
+      <div class="summary-card-sub">Items still to be reviewed</div>
+    </div>
+    ${phaseData.map((ph, i) => {
+      const phasePct = ph.total ? Math.round(ph.done / ph.total * 100) : 0;
+      const color = phasePct === 100 ? 'var(--green)' : phasePct > 0 ? 'var(--blue-light)' : 'var(--text-dim)';
+      return `
+        <div class="summary-card" style="cursor:pointer" onclick="switchPhase(${i}, document.querySelector('.phase-btn[data-phase=\\'${i}\\']'))">
+          <div class="summary-card-label">Phase ${i+1}</div>
+          <div class="summary-card-num" style="color:${color};font-size:24px">${phasePct}%</div>
+          <div class="summary-card-sub">${ph.name}</div>
+          <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+            <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--green)">✓${ph.done}</span>
+            ${ph.flagged ? `<span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--amber)">⚑${ph.flagged}</span>` : ''}
+            ${ph.na ? `<span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim)">N/A:${ph.na}</span>` : ''}
+          </div>
+        </div>`;
+    }).join('')}
+  `;
+
+  // Flags list
+  const flagsBody = document.getElementById('flags-body');
+  const allFlagged = [];
+  for (let p = 0; p < 8; p++) {
+    const panel = document.getElementById('phase-' + p);
+    if (!panel) continue;
+    panel.querySelectorAll('.checklist-item.flagged').forEach(item => {
+      const title = item.querySelector('.item-title')?.textContent || 'Unnamed item';
+      const note = item.querySelector('.item-note')?.value || '';
+      allFlagged.push({ phase: PHASE_NAMES[p], title, note, phaseIdx: p });
+    });
+  }
+  
+  if (allFlagged.length === 0) {
+    flagsBody.innerHTML = '<div style="color:var(--text-dim);font-size:12px;font-family:\'DM Mono\',monospace;padding:4px 0">No flagged items. Flags appear here when items are marked ⚑ for follow-up.</div>';
+  } else {
+    flagsBody.innerHTML = allFlagged.map(f => `
+      <div class="flag-row">
+        <span class="flag-icon">⚑</span>
+        <span class="flag-phase">${f.phase}</span>
+        <div>
+          <div class="flag-text">${f.title}</div>
+          ${f.note ? `<div style="font-size:11px;color:var(--text-dim);margin-top:2px;font-style:italic">${f.note}</div>` : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+// ═══════════════════════════════════
+// RESET
+// ═══════════════════════════════════
+
+function resetAll() {
+  if (!confirm('Reset all checklist items? This will clear all checks, flags, and notes.')) return;
+  localStorage.removeItem('devReviewState');
+  document.querySelectorAll('.checklist-item').forEach(item => {
+    item.classList.remove('checked', 'flagged', 'na', 'has-note');
+    const cb = item.querySelector('.item-checkbox');
+    if (cb) cb.textContent = '';
+    const note = item.querySelector('.item-note');
+    if (note) note.value = '';
+  });
+  ['proj-name','proj-apn','proj-applicant','proj-date'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  const summaryNotes = document.getElementById('summary-notes');
+  if (summaryNotes) summaryNotes.value = '';
+  updateProgress();
+  showToast('↺ Checklist reset');
+}
+
+// ═══════════════════════════════════
+// TOAST
+// ═══════════════════════════════════
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+// ═══════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ═══════════════════════════════════
+
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  const num = parseInt(e.key);
+  if (num >= 1 && num <= 9) {
+    const btn = document.querySelector('.phase-btn[data-phase="' + (num-1) + '"]');
+    if (btn) switchPhase(num-1, btn);
+  }
+});
+
+// ═══════════════════════════════════
+// INIT
+// ═══════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+  assignItemIds();
+  loadState();
+  updateProgress();
+  
+  // Auto-save notes
+  document.addEventListener('input', e => {
+    if (e.target.classList.contains('item-note') || e.target.classList.contains('project-input') || e.target.id === 'summary-notes') {
+      if (e.target.classList.contains('item-note') && e.target.value.trim()) {
+        e.target.closest('.checklist-item')?.classList.add('has-note');
+      }
+      saveState();
+    }
+  });
+  
+  // Show keyboard shortcut hint
+  setTimeout(() => showToast('💡 Press 1–9 to jump between phases'), 800);
+});
+</script>
+</body>
+</html>
