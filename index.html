@@ -399,6 +399,76 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
 #cip-pw-input:focus { border-color: var(--city-yellow); }
 #cip-pw-input.error { border-color: #ef4444 !important; animation: shake 0.3s ease; }
 
+/* ─── MASTER GATE ─── */
+#master-gate {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--dark);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  transition: opacity 0.4s ease;
+}
+#master-gate.unlocked {
+  opacity: 0; pointer-events: none;
+}
+.master-gate-inner {
+  background: var(--dark-3);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px 44px;
+  max-width: 400px; width: 90%;
+  text-align: center;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.7);
+}
+.master-gate-logo {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; margin-bottom: 28px;
+}
+.master-gate-logo img {
+  width: 44px; height: 44px;
+  border-radius: 50%; object-fit: cover; object-position: center top;
+  border: 2px solid var(--city-yellow);
+}
+.master-gate-logo-text { text-align: left; }
+.master-gate-logo-name { font-size: 14px; font-weight: 700; color: #fff; line-height: 1.2; }
+.master-gate-logo-dept { font-size: 10px; color: var(--text-muted); font-family: 'DM Mono', monospace; letter-spacing: 1px; text-transform: uppercase; }
+.master-gate-title {
+  font-size: 20px; font-weight: 700; color: #fff;
+  margin-bottom: 6px; letter-spacing: -0.3px;
+}
+.master-gate-sub {
+  font-size: 12px; color: var(--text-dim);
+  font-family: 'DM Mono', monospace;
+  margin-bottom: 24px; letter-spacing: 0.3px;
+}
+.master-gate-input-wrap { position: relative; margin-bottom: 10px; }
+#master-pw-input {
+  width: 100%; padding: 12px 42px 12px 16px;
+  background: var(--dark-4);
+  border: 1px solid var(--border-blue);
+  border-radius: 10px; color: var(--text); font-size: 14px;
+  outline: none; font-family: 'Sora', sans-serif;
+  transition: border-color 0.2s; box-sizing: border-box;
+}
+#master-pw-input:focus { border-color: var(--city-blue); }
+#master-pw-input.error { border-color: #ef4444 !important; animation: shake 0.3s ease; }
+.master-toggle {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer; font-size: 16px; padding: 2px;
+}
+.master-error { font-size: 11px; color: #ef4444; min-height: 16px; margin-bottom: 12px; }
+.master-submit {
+  width: 100%; padding: 12px;
+  background: var(--city-blue); border: none; color: #fff;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  border-radius: 10px; font-family: 'Sora', sans-serif;
+  letter-spacing: 0.3px; transition: background 0.2s;
+}
+.master-submit:hover { background: var(--city-blue-deep); }
+.master-footer {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  color: var(--text-muted); margin-top: 16px; letter-spacing: 0.3px;
+}
+
 @media (max-width: 700px) {
   :root { --nav-w: 0px; }
   .sidenav { transform: translateX(-100%); }
@@ -406,6 +476,28 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
 </style>
 </head>
 <body>
+
+<!-- ─── MASTER GATE ─── -->
+<div id="master-gate">
+  <div class="master-gate-inner">
+    <div class="master-gate-logo">
+      <img src="data:image/jpeg;base64,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" style="width:44px;height:44px;border-radius:50%;object-fit:cover;object-position:center top;border:2px solid #FFC72C;" alt="Abhishek Parikh">
+      <div class="master-gate-logo-text">
+        <div class="master-gate-logo-name">Abhishek Parikh</div>
+        <div class="master-gate-logo-dept">Transportation Division</div>
+      </div>
+    </div>
+    <div class="master-gate-title">Intelligence <span style="color:var(--city-yellow)">Hub</span></div>
+    <div class="master-gate-sub">City of Concord · Restricted Access</div>
+    <div class="master-gate-input-wrap">
+      <input type="password" id="master-pw-input" placeholder="Enter password" autocomplete="off" spellcheck="false">
+      <button class="master-toggle" onclick="toggleMasterPw()" tabindex="-1">👁</button>
+    </div>
+    <div class="master-error" id="master-error-msg"></div>
+    <button class="master-submit" onclick="submitMasterPassword()">Enter Hub</button>
+    <div class="master-footer">Session access only · Closes when browser tab closes</div>
+  </div>
+</div>
 
 <!-- ─── TOPBAR ─── -->
 <div class="topbar">
@@ -917,6 +1009,46 @@ function togglePwVisibility() {
 document.getElementById('grant-pw-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') submitGrantPassword();
   if (e.key === 'Escape') hideGrantLock();
+});
+
+// ── MASTER PASSWORD GATE ──
+const MASTER_PW_HASH = '4338ef3d8af8f65ba2744738e2ff1f2fce5743d4234b0ff63439f5090af22e66';
+const MASTER_SESSION_KEY = 'master_auth_v1';
+
+(function initMasterGate() {
+  const gate = document.getElementById('master-gate');
+  if (sessionStorage.getItem(MASTER_SESSION_KEY) === 'true') {
+    gate.style.display = 'none';
+  } else {
+    // Prevent any interaction with the hub behind it
+    document.getElementById('master-pw-input').focus();
+  }
+})();
+
+async function submitMasterPassword() {
+  const inp = document.getElementById('master-pw-input');
+  const val = inp.value;
+  if (!val) return;
+  const hash = await sha256(val);
+  if (hash === MASTER_PW_HASH) {
+    sessionStorage.setItem(MASTER_SESSION_KEY, 'true');
+    const gate = document.getElementById('master-gate');
+    gate.classList.add('unlocked');
+    setTimeout(() => gate.style.display = 'none', 420);
+  } else {
+    inp.classList.add('error');
+    document.getElementById('master-error-msg').textContent = 'Incorrect password. Try again.';
+    inp.value = '';
+    setTimeout(() => inp.classList.remove('error'), 800);
+    inp.focus();
+  }
+}
+function toggleMasterPw() {
+  const inp = document.getElementById('master-pw-input');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+document.getElementById('master-pw-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitMasterPassword();
 });
 
 // ── CIP PASSWORD GATE ──
