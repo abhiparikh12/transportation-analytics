@@ -312,6 +312,145 @@ body::before{content:'';position:fixed;inset:0;background:
   gap: 10px;
 }
 
+
+/* ── UNIFIED THEME OVERRIDE ── */
+:root {
+  --city-blue: #005EB8 !important;
+  --city-yellow: #FFC72C !important;
+}
+
+/* Force dark navy base across all dashboards */
+html, body {
+  background: #0a1628 !important;
+  color: #e8eef8 !important;
+}
+
+/* Budget dashboard overrides (light theme → dark) */
+:root {
+  --bg: #0a1628 !important;
+  --sur: #112240 !important;
+  --sur2: #0d1f3c !important;
+  --bdr: rgba(255,199,44,0.15) !important;
+  --ink: #e8eef8 !important;
+  --ink2: #a8bcdc !important;
+  --ink3: #7a90b0 !important;
+  --blu: #005EB8 !important;
+  --blu2: rgba(0,94,184,0.15) !important;
+  --acc: #FFC72C !important;
+  --rul: rgba(255,255,255,0.08) !important;
+  --grn: #34d399 !important;
+  --grn2: rgba(52,211,153,0.12) !important;
+  --amb: #FFC72C !important;
+  --amb2: rgba(255,199,44,0.12) !important;
+  --red: #f87171 !important;
+  --red2: rgba(248,113,113,0.12) !important;
+}
+
+/* Signal/SPM overrides (GitHub grey → Concord navy) */
+:root {
+  --bg-primary: #0a1628 !important;
+  --bg-secondary: #112240 !important;
+  --bg-tertiary: #0d1f3c !important;
+  --border: rgba(255,199,44,0.15) !important;
+  --text-primary: #e8eef8 !important;
+  --text-secondary: #a8bcdc !important;
+  --text-muted: #7a90b0 !important;
+  --accent: #005EB8 !important;
+  --accent-hover: #0071e3 !important;
+  --success: #34d399 !important;
+  --warning: #FFC72C !important;
+  --danger: #f87171 !important;
+}
+
+/* Grant overrides */
+:root {
+  --s0: #0d1f3c !important;
+  --s1: #112240 !important;
+  --s2: #162b4d !important;
+  --s3: #1a3259 !important;
+  --bd: rgba(255,199,44,0.12) !important;
+  --bdh: rgba(255,199,44,0.25) !important;
+  --acc: #005EB8 !important;
+  --tx: #e8eef8 !important;
+  --mt: #7a90b0 !important;
+  --dm: rgba(0,94,184,0.2) !important;
+}
+
+/* Structural surface overrides */
+.hdr, header, .topbar, .sidebar, .nav, .panel,
+.card, .kpi, .tab-panel, .tab-content,
+[class*="sidebar"], [class*="header"],
+[class*="-hdr"], [class*="hdr-"] {
+  background: #0d1f3c !important;
+  border-color: rgba(255,199,44,0.15) !important;
+}
+
+.hdr { border-bottom: 1px solid rgba(255,199,44,0.2) !important; }
+
+/* Cards and surfaces */
+.card, .kpi-card, .proj-card, .stat-card,
+[class*="-card"], [class*="card-"] {
+  background: #112240 !important;
+  border-color: rgba(255,199,44,0.12) !important;
+}
+
+/* Tables */
+table { border-color: rgba(255,199,44,0.1) !important; }
+th { background: #0d1f3c !important; color: #FFC72C !important; border-color: rgba(255,199,44,0.15) !important; }
+td { border-color: rgba(255,255,255,0.06) !important; color: #e8eef8 !important; }
+tr:nth-child(even) td { background: rgba(255,255,255,0.03) !important; }
+tr:hover td { background: rgba(0,94,184,0.15) !important; }
+
+/* Inputs and filters */
+input, select, textarea {
+  background: #0a1628 !important;
+  border-color: rgba(255,199,44,0.2) !important;
+  color: #e8eef8 !important;
+}
+input:focus, select:focus {
+  border-color: #005EB8 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(0,94,184,0.2) !important;
+}
+
+/* Budget tab buttons specifically */
+.tbtn, .tab-btn, .tab {
+  background: #0d1f3c !important;
+  color: #a8bcdc !important;
+  border-color: rgba(255,199,44,0.15) !important;
+}
+.tbtn.on, .tab-btn.active, .tab.active {
+  background: #005EB8 !important;
+  color: #fff !important;
+  border-color: #005EB8 !important;
+}
+
+/* Signal/SPM specific overrides */
+body { background: #0a1628 !important; }
+.sidebar { background: #0d1f3c !important; border-right-color: rgba(255,199,44,0.15) !important; }
+.main-content, .content { background: #0a1628 !important; }
+.detail-panel { background: #0d1f3c !important; }
+
+/* Canvas chart backgrounds */
+canvas { background: transparent !important; }
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0a1628; }
+::-webkit-scrollbar-thumb { background: rgba(0,94,184,0.5); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #005EB8; }
+
+
+/* Grant: Adjust blue accents to Concord blue */
+.bc a, .bc span { color: #FFC72C !important; }
+.hdr h1 { color: #e8eef8 !important; }
+.cat-bar { background: linear-gradient(135deg, #0d1f3c 0%, #112240 100%) !important; border: 1px solid rgba(255,199,44,0.15) !important; }
+.proj-row { background: #112240 !important; border-color: rgba(255,199,44,0.08) !important; }
+.proj-row:hover { background: rgba(0,94,184,0.15) !important; }
+.stat-num { color: #FFC72C !important; }
+.cat-label { color: #e8eef8 !important; }
+.legend-dot { border-color: rgba(255,255,255,0.2) !important; }
+
 </style>
 </head>
 <body>

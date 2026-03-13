@@ -127,6 +127,158 @@ table.ct{width:100%;border-collapse:collapse;font-size:11.5px;}
   gap: 10px;
 }
 
+
+/* ── UNIFIED THEME OVERRIDE ── */
+:root {
+  --city-blue: #005EB8 !important;
+  --city-yellow: #FFC72C !important;
+}
+
+/* Force dark navy base across all dashboards */
+html, body {
+  background: #0a1628 !important;
+  color: #e8eef8 !important;
+}
+
+/* Budget dashboard overrides (light theme → dark) */
+:root {
+  --bg: #0a1628 !important;
+  --sur: #112240 !important;
+  --sur2: #0d1f3c !important;
+  --bdr: rgba(255,199,44,0.15) !important;
+  --ink: #e8eef8 !important;
+  --ink2: #a8bcdc !important;
+  --ink3: #7a90b0 !important;
+  --blu: #005EB8 !important;
+  --blu2: rgba(0,94,184,0.15) !important;
+  --acc: #FFC72C !important;
+  --rul: rgba(255,255,255,0.08) !important;
+  --grn: #34d399 !important;
+  --grn2: rgba(52,211,153,0.12) !important;
+  --amb: #FFC72C !important;
+  --amb2: rgba(255,199,44,0.12) !important;
+  --red: #f87171 !important;
+  --red2: rgba(248,113,113,0.12) !important;
+}
+
+/* Signal/SPM overrides (GitHub grey → Concord navy) */
+:root {
+  --bg-primary: #0a1628 !important;
+  --bg-secondary: #112240 !important;
+  --bg-tertiary: #0d1f3c !important;
+  --border: rgba(255,199,44,0.15) !important;
+  --text-primary: #e8eef8 !important;
+  --text-secondary: #a8bcdc !important;
+  --text-muted: #7a90b0 !important;
+  --accent: #005EB8 !important;
+  --accent-hover: #0071e3 !important;
+  --success: #34d399 !important;
+  --warning: #FFC72C !important;
+  --danger: #f87171 !important;
+}
+
+/* Grant overrides */
+:root {
+  --s0: #0d1f3c !important;
+  --s1: #112240 !important;
+  --s2: #162b4d !important;
+  --s3: #1a3259 !important;
+  --bd: rgba(255,199,44,0.12) !important;
+  --bdh: rgba(255,199,44,0.25) !important;
+  --acc: #005EB8 !important;
+  --tx: #e8eef8 !important;
+  --mt: #7a90b0 !important;
+  --dm: rgba(0,94,184,0.2) !important;
+}
+
+/* Structural surface overrides */
+.hdr, header, .topbar, .sidebar, .nav, .panel,
+.card, .kpi, .tab-panel, .tab-content,
+[class*="sidebar"], [class*="header"],
+[class*="-hdr"], [class*="hdr-"] {
+  background: #0d1f3c !important;
+  border-color: rgba(255,199,44,0.15) !important;
+}
+
+.hdr { border-bottom: 1px solid rgba(255,199,44,0.2) !important; }
+
+/* Cards and surfaces */
+.card, .kpi-card, .proj-card, .stat-card,
+[class*="-card"], [class*="card-"] {
+  background: #112240 !important;
+  border-color: rgba(255,199,44,0.12) !important;
+}
+
+/* Tables */
+table { border-color: rgba(255,199,44,0.1) !important; }
+th { background: #0d1f3c !important; color: #FFC72C !important; border-color: rgba(255,199,44,0.15) !important; }
+td { border-color: rgba(255,255,255,0.06) !important; color: #e8eef8 !important; }
+tr:nth-child(even) td { background: rgba(255,255,255,0.03) !important; }
+tr:hover td { background: rgba(0,94,184,0.15) !important; }
+
+/* Inputs and filters */
+input, select, textarea {
+  background: #0a1628 !important;
+  border-color: rgba(255,199,44,0.2) !important;
+  color: #e8eef8 !important;
+}
+input:focus, select:focus {
+  border-color: #005EB8 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(0,94,184,0.2) !important;
+}
+
+/* Budget tab buttons specifically */
+.tbtn, .tab-btn, .tab {
+  background: #0d1f3c !important;
+  color: #a8bcdc !important;
+  border-color: rgba(255,199,44,0.15) !important;
+}
+.tbtn.on, .tab-btn.active, .tab.active {
+  background: #005EB8 !important;
+  color: #fff !important;
+  border-color: #005EB8 !important;
+}
+
+/* Signal/SPM specific overrides */
+body { background: #0a1628 !important; }
+.sidebar { background: #0d1f3c !important; border-right-color: rgba(255,199,44,0.15) !important; }
+.main-content, .content { background: #0a1628 !important; }
+.detail-panel { background: #0d1f3c !important; }
+
+/* Canvas chart backgrounds */
+canvas { background: transparent !important; }
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0a1628; }
+::-webkit-scrollbar-thumb { background: rgba(0,94,184,0.5); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #005EB8; }
+
+
+/* Budget-specific structural fixes */
+.mast { background: #0d1f3c !important; border-bottom: 1px solid rgba(255,199,44,0.2) !important; color: #e8eef8 !important; }
+.mast h1, .mast p, .mast em { color: #e8eef8 !important; }
+.tp { background: #0a1628 !important; }
+.sec-hdr { background: #0d1f3c !important; color: #FFC72C !important; border-color: rgba(255,199,44,0.2) !important; }
+.kpi-row .kpi { background: #112240 !important; border: 1px solid rgba(255,199,44,0.12) !important; }
+.kpi .lbl { color: #7a90b0 !important; }
+.kpi .val { color: #e8eef8 !important; }
+.kpi .sub { color: #a8bcdc !important; }
+.chart-box { background: #112240 !important; border: 1px solid rgba(255,199,44,0.08) !important; }
+.chart-box .ch-lbl { color: #FFC72C !important; }
+.sp { color: #e8eef8 !important; }
+.sp.s-nw { background: rgba(0,94,184,0.25) !important; border: 1px solid rgba(0,94,184,0.4) !important; color: #60a5fa !important; }
+.sp.s-ac { background: rgba(255,199,44,0.15) !important; border: 1px solid rgba(255,199,44,0.3) !important; color: #FFC72C !important; }
+.sp.s-ro { background: rgba(52,211,153,0.12) !important; border: 1px solid rgba(52,211,153,0.25) !important; color: #34d399 !important; }
+.sp.s-act { background: rgba(168,188,220,0.12) !important; border: 1px solid rgba(168,188,220,0.2) !important; color: #a8bcdc !important; }
+.note-cell { color: #7a90b0 !important; }
+.prog-bar { background: rgba(255,255,255,0.08) !important; }
+/* Override fee/status badge light backgrounds */
+[style*="#fef3c7"], [style*="#fee2e2"], [style*="#f3e8ff"] { 
+  background: rgba(255,199,44,0.12) !important; 
+}
+
 </style>
 </head>
 <body>
@@ -391,7 +543,7 @@ function drawLine(id,sets,budget){
   const yp=v=>p.t+ch-(v/mx)*ch;
 
   // Budget line
-  if(budget){ctx.strokeStyle='#d8d4ce';ctx.lineWidth=1;ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(p.l,yp(budget));ctx.lineTo(p.l+cw,yp(budget));ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#aaa69f';ctx.font='10px DM Mono,monospace';ctx.textAlign='right';ctx.fillText('Budget →',p.l+cw,yp(budget)-4);}
+  if(budget){ctx.strokeStyle='rgba(255,255,255,0.1)';ctx.lineWidth=1;ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(p.l,yp(budget));ctx.lineTo(p.l+cw,yp(budget));ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#7a90b0';ctx.font='10px DM Mono,monospace';ctx.textAlign='right';ctx.fillText('Budget →',p.l+cw,yp(budget)-4);}
 
   // Grid
   ctx.strokeStyle='#ece8e2';ctx.lineWidth=1;
@@ -658,7 +810,7 @@ function drawCIPYoY(){
   [0,250000,500000,1000000,1500000].forEach(t=>{
     const x=lpad+scale(t);
     ctx.beginPath(); ctx.moveTo(x,tpad); ctx.lineTo(x,tpad+(grpH+gap)*projs.length); ctx.stroke();
-    ctx.fillStyle='#aaa69f'; ctx.font='10px DM Mono,monospace'; ctx.textAlign='center';
+    ctx.fillStyle='#7a90b0'; ctx.font='10px DM Mono,monospace'; ctx.textAlign='center';
     ctx.fillText(t===0?'$0':'$'+t/1000+'K',x,tpad+(grpH+gap)*projs.length+14);
   });
 
