@@ -434,10 +434,6 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
   color: var(--text-muted); margin-top: 16px; letter-spacing: 0.3px;
 }
 
-@media (max-width: 700px) {
-  :root { --nav-w: 0px; }
-  .sidenav { transform: translateX(-100%); }
-}
 </style>
 </head>
 <body>
@@ -502,15 +498,6 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
     <span class="heading-text">Transportation</span>
     <div class="heading-line"></div>
   </div>
-
-  <button class="nav-item" data-panel="budget" onclick="switchPanel('budget', this)">
-    <div class="nav-icon">📊</div>
-    <div class="nav-labels">
-      <span class="nav-name">Transportation Budget</span>
-      <span class="nav-sub">FY 25–26 operating & CIP</span>
-    </div>
-    <span class="nav-badge" style="background:rgba(96,165,250,0.15);color:#60a5fa;border:1px solid rgba(96,165,250,0.3)">4 div</span>
-  </button>
 
   <button class="nav-item" data-panel="grant" onclick="handleGrantNav(this)">
     <div class="nav-icon">💡</div>
@@ -610,17 +597,6 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
       </div>
 
       <div class="module-grid" style="margin-bottom:28px">
-        <div class="module-card" style="--accent:#60a5fa" onclick="switchPanel('budget', document.querySelector('[data-panel=budget]'))">
-          <span class="card-icon">📊</span>
-          <div class="card-title">Transportation Budget & CIP</div>
-          <div class="card-desc">Operating budget across 4 divisions, 22 CIP projects with Lawson GL actuals and Measure V breakdown.</div>
-          <div class="card-tags">
-            <span class="card-tag">Operating</span>
-            <span class="card-tag">CIP</span>
-            <span class="card-tag">Lawson</span>
-            <span class="card-tag">Measure V</span>
-          </div>
-          <span class="card-cta">→</span>
         </div>
 
         <div class="module-card" style="--accent:#34d399" onclick="handleGrantNav(document.querySelector('[data-panel=grant]'))">
@@ -699,14 +675,6 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
   </div>
 
   <!-- IFRAME PANELS -->
-  <div class="panel" id="panel-budget">
-    <div class="panel-loader" id="loader-budget">
-      <div class="loader-ring"></div>
-      <div class="loader-txt">Loading Transportation Budget…</div>
-    </div>
-    <iframe class="panel-iframe" id="iframe-budget" title="Transportation Budget & CIP Status"></iframe>
-  </div>
-
   <div class="panel" id="panel-grant">
     <div class="panel-loader" id="loader-grant">
       <div class="loader-ring"></div>
@@ -769,7 +737,6 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
 
 <script>
 const PANELS = {
-  budget:      { file: 'FY25-26_Dashboard_v2_march_6_data.html',  title: 'Transportation Budget & CIP' },
   grant:       { file: 'Grant_Intelligence_Module.html',           title: 'Grant Intelligence' },
   signal:      { file: 'Concord_Signal_Upgrade_Dashboard.html',    title: 'Signal Upgrade Tracker' },
   requests:    { file: 'concord_resident_requests_dashboard.html', title: 'Resident Requests' },
@@ -823,12 +790,12 @@ function switchPanel(id, btn) {
   }
 }
 
-// Keyboard shortcuts: 1=home, 2=budget, 3=grant, 4=signal, 5=requests, 6=spm, 7=devreview
+// Keyboard shortcuts: 1=home, 2=grant, 3=signal, 4=requests, 5=spm, 6=devreview
 document.addEventListener('keydown', e => {
   const map = {
-    '1': 'home', '2': 'budget', '3': 'grant',
-    '4': 'signal', '5': 'requests', '6': 'spm',
-    '7': 'devreview'
+    '1': 'home', '2': 'grant',
+    '3': 'signal', '4': 'requests', '5': 'spm',
+    '6': 'devreview'
   };
   if (map[e.key]) {
     if (map[e.key] === 'grant') {
