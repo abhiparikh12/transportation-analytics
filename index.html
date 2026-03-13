@@ -289,6 +289,85 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
 .module-section-line { flex: 1; height: 1px; background: var(--border); }
 
 .module-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+
+/* ── Hub overview grid ── */
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 28px;
+}
+.hub-card {
+  --hc: #005EB8;
+  position: relative;
+  background: var(--dark-3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 16px 32px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hub-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--hc);
+}
+.hub-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 32px rgba(0,0,0,0.35);
+  border-color: rgba(255,255,255,0.12);
+}
+.hub-card.planning {
+  --hc: #f59e0b;
+  background: rgba(245,158,11,0.07);
+  border-color: rgba(245,158,11,0.25);
+}
+.hub-card.planning:hover {
+  background: rgba(245,158,11,0.12);
+  border-color: rgba(245,158,11,0.4);
+}
+.hub-card-icon { font-size: 20px; margin-bottom: 6px; }
+.hub-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+.hub-card-sub {
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.5;
+  margin-top: 2px;
+}
+.hub-card-tag {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--hc);
+  opacity: 0.9;
+}
+.hub-card-arrow {
+  position: absolute;
+  bottom: 12px;
+  right: 14px;
+  font-size: 14px;
+  color: var(--hc);
+  opacity: 0.5;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.hub-card:hover .hub-card-arrow { opacity: 1; transform: translateX(3px); }
+@media (max-width: 900px) { .hub-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .hub-grid { grid-template-columns: 1fr; } }
+
 .module-card {
   background: var(--dark-3); border: 1px solid var(--border);
   border-radius: 12px; padding: 20px;
@@ -572,7 +651,7 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
       <div class="home-hero">
         <div class="home-eyebrow">Transportation Division</div>
         <h1 class="home-h1">Concord <em>Intelligence</em> Hub</h1>
-        <p class="home-sub">Unified view of transportation operations, capital programs, resident requests, signal performance, and grant intelligence — all in one place.</p>
+        <p class="home-sub">Unified view of transportation operations, resident requests, signal performance, and grant intelligence — all in one place.</p>
       </div>
 
       <div class="stats-strip">
@@ -590,85 +669,59 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
         </div>
       </div>
 
-      <!-- Transportation section -->
-      <div class="module-section-head">
-        <span class="module-section-label transport">Transportation</span>
-        <div class="module-section-line"></div>
-      </div>
+      <!-- Unified 3×3 card grid -->
+      <div class="hub-grid">
 
-      <div class="module-grid" style="margin-bottom:28px">
+        <!-- Grant Intelligence -->
+        <div class="hub-card transport" onclick="handleGrantNav(document.querySelector('[data-panel=grant]'))">
+          <div class="hub-card-accent"></div>
+          <div class="hub-card-icon">💡</div>
+          <div class="hub-card-title">Grant Intelligence</div>
+          <div class="hub-card-sub">HSIP · SS4A · ATP · C13</div>
+          <div class="hub-card-tag">Transportation</div>
+          <div class="hub-card-arrow">→</div>
         </div>
 
-        <div class="module-card" style="--accent:#34d399" onclick="handleGrantNav(document.querySelector('[data-panel=grant]'))">
-          <span class="card-icon">💡</span>
-          <div class="card-title">Grant Intelligence Module</div>
-          <div class="card-desc">5-cycle HSIP program analysis (C8–C12), Concord collision data 2020–2025, and Cycle 13 strategy planning.</div>
-          <div class="card-tags">
-            <span class="card-tag">HSIP</span>
-            <span class="card-tag">SS4A</span>
-            <span class="card-tag">ATP</span>
-            <span class="card-tag">Cycle 13</span>
-          </div>
-          <span class="card-cta">→</span>
+        <!-- Signal Upgrade -->
+        <div class="hub-card transport" style="--hc:#fb923c" onclick="switchPanel('signal', document.querySelector('[data-panel=signal]'))">
+          <div class="hub-card-accent"></div>
+          <div class="hub-card-icon">🚦</div>
+          <div class="hub-card-title">Signal Upgrades</div>
+          <div class="hub-card-sub">152 intersections · 8 projects</div>
+          <div class="hub-card-tag">Transportation</div>
+          <div class="hub-card-arrow">→</div>
         </div>
 
-        <div class="module-card" style="--accent:#fb923c" onclick="switchPanel('signal', document.querySelector('[data-panel=signal]'))">
-          <span class="card-icon">🚦</span>
-          <div class="card-title">Signal Upgrade Tracker</div>
-          <div class="card-desc">8 upgrade projects covering 152 intersections — matrix view, project progress, and upgrade-type breakdown.</div>
-          <div class="card-tags">
-            <span class="card-tag">Signals</span>
-            <span class="card-tag">8 Projects</span>
-            <span class="card-tag">152 Sites</span>
-          </div>
-          <span class="card-cta">→</span>
+        <!-- Resident Requests -->
+        <div class="hub-card transport" style="--hc:#a78bfa" onclick="switchPanel('requests', document.querySelector('[data-panel=requests]'))">
+          <div class="hub-card-accent"></div>
+          <div class="hub-card-icon">📍</div>
+          <div class="hub-card-title">Resident Requests</div>
+          <div class="hub-card-sub">633 records · 2022–2025</div>
+          <div class="hub-card-tag">Transportation</div>
+          <div class="hub-card-arrow">→</div>
         </div>
 
-        <div class="module-card" style="--accent:#a78bfa" onclick="switchPanel('requests', document.querySelector('[data-panel=requests]'))">
-          <span class="card-icon">📍</span>
-          <div class="card-title">Resident Requests Map</div>
-          <div class="card-desc">633 geocoded requests from 2022–2025 across 13 category buckets — filterable by year, type, outcome, and speeding flag.</div>
-          <div class="card-tags">
-            <span class="card-tag">Map</span>
-            <span class="card-tag">2022–2025</span>
-            <span class="card-tag">633 Records</span>
-          </div>
-          <span class="card-cta">→</span>
+        <!-- SPM / ITERIS -->
+        <div class="hub-card transport" style="--hc:#2dd4bf" onclick="switchPanel('spm', document.querySelector('[data-panel=spm]'))">
+          <div class="hub-card-accent"></div>
+          <div class="hub-card-icon">📡</div>
+          <div class="hub-card-title">SPM / ITERIS</div>
+          <div class="hub-card-sub">Signal performance · RLR · VLive</div>
+          <div class="hub-card-tag">Transportation</div>
+          <div class="hub-card-arrow">→</div>
         </div>
 
-        <div class="module-card" style="--accent:#2dd4bf" onclick="switchPanel('spm', document.querySelector('[data-panel=spm]'))">
-          <span class="card-icon">📡</span>
-          <div class="card-title">ITERIS SPM Dashboard</div>
-          <div class="card-desc">Signal performance monitoring — SPM, RLR, and VLive deployment tracker across all Concord signalized intersections.</div>
-          <div class="card-tags">
-            <span class="card-tag">ITERIS</span>
-            <span class="card-tag">SPM</span>
-            <span class="card-tag">RLR</span>
-            <span class="card-tag">VLive</span>
-          </div>
-          <span class="card-cta">→</span>
+        <!-- Dev Review Tool — Planning, visually distinct -->
+        <div class="hub-card planning" onclick="switchPanel('devreview', document.querySelector('[data-panel=devreview]'))">
+          <div class="hub-card-accent"></div>
+          <div class="hub-card-icon">📋</div>
+          <div class="hub-card-title">Development Review</div>
+          <div class="hub-card-sub">CMC Title 18 &amp; 19 · 9 phases</div>
+          <div class="hub-card-tag">Planning / Transportation</div>
+          <div class="hub-card-arrow">→</div>
         </div>
-      </div>
 
-      <!-- Planning / Transportation section -->
-      <div class="module-section-head">
-        <span class="module-section-label planning">Planning / Transportation</span>
-        <div class="module-section-line"></div>
-      </div>
-
-      <div class="module-grid" style="margin-bottom:28px">
-        <div class="module-card" style="--accent:#fb923c" onclick="switchPanel('devreview', document.querySelector('[data-panel=devreview]'))">
-          <span class="card-icon">📋</span>
-          <div class="card-title">Development Review Tool</div>
-          <div class="card-desc">Interactive CMC Title 18 &amp; 19 checklist for Planning &amp; Transportation — 9 phases, 80+ items, flagging, notes, and progress tracking.</div>
-          <div class="card-tags">
-            <span class="card-tag">Planning</span>
-            <span class="card-tag">Transportation</span>
-            <span class="card-tag">CMC §18</span>
-            <span class="card-tag">CMC §19</span>
-          </div>
-          <span class="card-cta">→</span>
-        </div>
       </div>
 
     </div>
