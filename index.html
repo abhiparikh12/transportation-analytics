@@ -372,6 +372,33 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
 .lock-cancel:hover { color: var(--text-dim); }
 .lock-footer { font-family: 'DM Mono', monospace; font-size: 9.5px; color: var(--text-muted); margin-top: 12px; letter-spacing: 0.3px; }
 
+#cip-lock-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+#cip-lock-overlay.open { opacity: 1; pointer-events: all; }
+#cip-lock-modal {
+  background: var(--dark-3); border: 1px solid rgba(255,199,44,0.25);
+  border-radius: 16px; padding: 32px 36px;
+  max-width: 380px; width: 90%;
+  text-align: center;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+  transform: scale(0.96); transition: transform 0.25s ease;
+}
+#cip-lock-overlay.open #cip-lock-modal { transform: scale(1); }
+#cip-pw-input {
+  width: 100%; padding: 11px 40px 11px 14px;
+  background: var(--dark-4); border: 1px solid rgba(255,199,44,0.3);
+  border-radius: 8px; color: var(--text); font-size: 14px;
+  outline: none; font-family: 'Sora', sans-serif;
+  transition: border-color 0.2s;
+}
+#cip-pw-input:focus { border-color: var(--city-yellow); }
+#cip-pw-input.error { border-color: #ef4444 !important; animation: shake 0.3s ease; }
+
 @media (max-width: 700px) {
   :root { --nav-w: 0px; }
   .sidenav { transform: translateX(-100%); }
@@ -489,7 +516,7 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
     <div class="heading-line"></div>
   </div>
 
-  <button class="nav-item" data-panel="cipcitywide" onclick="switchPanel('cipcitywide', this)">
+  <button class="nav-item" data-panel="cipcitywide" onclick="handleCIPNav(this)">
     <div class="nav-icon">🏙️</div>
     <div class="nav-labels">
       <span class="nav-name">Citywide CIP Dashboard</span>
@@ -641,7 +668,7 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
       </div>
 
       <div class="module-grid">
-        <div class="module-card" style="--accent:var(--city-yellow)" onclick="switchPanel('cipcitywide', document.querySelector('[data-panel=cipcitywide]'))">
+        <div class="module-card" style="--accent:var(--city-yellow)" onclick="handleCIPNav(document.querySelector('[data-panel=cipcitywide]'))">
           <span class="card-icon">🏙️</span>
           <div class="card-title">Citywide CIP Dashboard</div>
           <div class="card-desc">363 active projects, $438M capital portfolio — by department, by fund, full project drill-down with budget health analysis.</div>
@@ -734,6 +761,23 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
   </div>
 </div>
 
+<!-- ── CIP PASSWORD GATE OVERLAY ── -->
+<div id="cip-lock-overlay">
+  <div id="cip-lock-modal">
+    <span class="lock-icon">🏙️</span>
+    <div class="lock-title">Restricted Access</div>
+    <div class="lock-sub">Citywide CIP Dashboard</div>
+    <div class="lock-input-wrap">
+      <input type="password" id="cip-pw-input" placeholder="Enter password" autocomplete="off" spellcheck="false">
+      <button class="lock-toggle" onclick="toggleCIPPwVisibility()" tabindex="-1">👁</button>
+    </div>
+    <div class="lock-error-msg" id="cip-error-msg"></div>
+    <button class="lock-submit" onclick="submitCIPPassword()">Unlock</button>
+    <button class="lock-cancel" onclick="hideCIPLock()">Cancel</button>
+    <div class="lock-footer">Session access only · Closes when browser tab closes</div>
+  </div>
+</div>
+
 <script>
 const PANELS = {
   budget:      { file: 'FY25-26_Dashboard_v2_march_6_data.html',  title: 'Transportation Budget & CIP' },
@@ -801,6 +845,8 @@ document.addEventListener('keydown', e => {
   if (map[e.key]) {
     if (map[e.key] === 'grant') {
       handleGrantNav(document.querySelector('[data-panel="grant"]'));
+    } else if (map[e.key] === 'cipcitywide') {
+      handleCIPNav(document.querySelector('[data-panel="cipcitywide"]'));
     } else {
       const btn = document.querySelector(`[data-panel="${map[e.key]}"]`);
       switchPanel(map[e.key], btn);
@@ -871,6 +917,67 @@ function togglePwVisibility() {
 document.getElementById('grant-pw-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') submitGrantPassword();
   if (e.key === 'Escape') hideGrantLock();
+});
+
+// ── CIP PASSWORD GATE ──
+const CIP_PW_HASH = '80e26f24d3dd134884f27ad5681ac7ed2339d2f35cf656e2a0ed3a7b62a7bb22';
+const CIP_SESSION_KEY = 'cip_auth_v1';
+let _pendingCIPNav = null;
+
+function isCIPUnlocked() {
+  return sessionStorage.getItem(CIP_SESSION_KEY) === 'true';
+}
+function handleCIPNav(btn) {
+  if (isCIPUnlocked()) {
+    switchPanel('cipcitywide', btn);
+  } else {
+    showCIPLock(btn);
+  }
+}
+function showCIPLock(btn) {
+  _pendingCIPNav = btn;
+  const overlay = document.getElementById('cip-lock-overlay');
+  overlay.classList.add('open');
+  setTimeout(() => {
+    const inp = document.getElementById('cip-pw-input');
+    inp.value = '';
+    inp.classList.remove('error');
+    document.getElementById('cip-error-msg').textContent = '';
+    inp.focus();
+  }, 80);
+}
+function hideCIPLock() {
+  document.getElementById('cip-lock-overlay').classList.remove('open');
+  _pendingCIPNav = null;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const cur = document.querySelector(`.nav-item[data-panel="${currentPanel}"]`);
+  if (cur) cur.classList.add('active');
+}
+async function submitCIPPassword() {
+  const inp = document.getElementById('cip-pw-input');
+  const val = inp.value;
+  if (!val) return;
+  const hash = await sha256(val);
+  if (hash === CIP_PW_HASH) {
+    sessionStorage.setItem(CIP_SESSION_KEY, 'true');
+    document.getElementById('cip-lock-overlay').classList.remove('open');
+    switchPanel('cipcitywide', _pendingCIPNav);
+    _pendingCIPNav = null;
+  } else {
+    inp.classList.add('error');
+    document.getElementById('cip-error-msg').textContent = 'Incorrect password. Try again.';
+    inp.value = '';
+    setTimeout(() => inp.classList.remove('error'), 800);
+    inp.focus();
+  }
+}
+function toggleCIPPwVisibility() {
+  const inp = document.getElementById('cip-pw-input');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+document.getElementById('cip-pw-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitCIPPassword();
+  if (e.key === 'Escape') hideCIPLock();
 });
 </script>
 </body>
