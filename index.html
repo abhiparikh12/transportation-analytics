@@ -631,6 +631,15 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
     <span class="nav-badge" style="background:rgba(251,146,60,0.15);color:#fb923c;border:1px solid rgba(251,146,60,0.3)">NEW</span>
   </button>
 
+  <button class="nav-item" data-panel="workplan" onclick="switchPanel('workplan', this)">
+    <div class="nav-icon">📝</div>
+    <div class="nav-labels">
+      <span class="nav-name">Work Plan</span>
+      <span class="nav-sub">Tasks · Status · FY Timeline</span>
+    </div>
+    <span class="nav-badge" style="background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.25)">LIVE</span>
+  </button>
+
 
 
   <div class="nav-footer">
@@ -722,6 +731,16 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
           <div class="hub-card-arrow">→</div>
         </div>
 
+        <!-- Work Plan -->
+        <div class="hub-card planning" style="--hc:#4ade80;background:rgba(34,197,94,0.07);border-color:rgba(34,197,94,0.2)" onclick="switchPanel('workplan', document.querySelector('[data-panel=workplan]'))">
+          <div class="hub-card-accent"></div>
+          <div class="hub-card-icon">📝</div>
+          <div class="hub-card-title">Transportation Work Plan</div>
+          <div class="hub-card-sub">47 tasks · 6 focus areas · FY25–27</div>
+          <div class="hub-card-tag">Planning / Transportation</div>
+          <div class="hub-card-arrow">→</div>
+        </div>
+
       </div>
 
     </div>
@@ -768,6 +787,14 @@ html, body { height: 100%; background: var(--dark); color: var(--text); font-fam
     <iframe class="panel-iframe" id="iframe-devreview" title="Development Review Tool"></iframe>
   </div>
 
+  <div class="panel" id="panel-workplan">
+    <div class="panel-loader" id="loader-workplan">
+      <div class="loader-ring"></div>
+      <div class="loader-txt">Loading Transportation Work Plan…</div>
+    </div>
+    <iframe class="panel-iframe" id="iframe-workplan" title="Transportation Work Plan"></iframe>
+  </div>
+
 </div>
 
 <!-- ── GRANT PASSWORD GATE OVERLAY ── -->
@@ -795,6 +822,7 @@ const PANELS = {
   requests:    { file: 'concord_resident_requests_dashboard.html', title: 'Resident Requests' },
   spm:         { file: 'Concord_Signal_SPM_Dashboard.html',        title: 'SPM / ITERIS Dashboard' },
   devreview:   { file: 'Concord_Dev_Review_Tool.html',             title: 'Development Review Tool' },
+  workplan:    { file: 'Transportation_Work_Plan.html',            title: 'Transportation Work Plan' },
 };
 
 let currentPanel = 'home';
