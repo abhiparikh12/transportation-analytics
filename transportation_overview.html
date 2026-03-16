@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transportation Overview | transportation-analytics.com</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue:#005EB8;--yellow:#FFC72C;--dark:#0a1628;--mid:#112240;
+  --card:#162b4d;--border:rgba(255,199,44,0.15);--text:#e8eef8;--muted:#7a90b0;
+  --blue-glow:rgba(0,94,184,0.35);--yellow-glow:rgba(255,199,44,0.2);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Sora',sans-serif;background:var(--dark);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* ── HEADER ── */
+header{
+  background:linear-gradient(135deg,var(--dark) 0%,var(--mid) 100%);
+  border-bottom:2px solid var(--yellow);padding:18px 32px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:1000;box-shadow:0 4px 32px rgba(0,0,0,0.6);
+}
+.header-left{display:flex;align-items:center;gap:16px;}
+.site-badge{
+  background:var(--blue);color:#fff;font-family:'DM Mono',monospace;
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  padding:5px 12px;border-radius:3px;border-left:3px solid var(--yellow);white-space:nowrap;
+}
+.header-titles h1{font-size:18px;font-weight:800;color:#fff;line-height:1.2;}
+.header-titles h1 span{color:var(--yellow);}
+.header-titles p{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;margin-top:2px;}
+.header-right{
+  font-family:'DM Mono',monospace;font-size:12px;color:var(--yellow);
+  background:rgba(255,199,44,0.1);border:1px solid rgba(255,199,44,0.3);
+  padding:6px 16px;border-radius:20px;white-space:nowrap;
+}
+
+/* ── DISCLAIMER BANNER ── */
+.disclaimer{
+  background:rgba(255,199,44,0.07);border-bottom:1px solid rgba(255,199,44,0.2);
+  padding:8px 32px;font-family:'DM Mono',monospace;font-size:10px;
+  color:var(--muted);letter-spacing:0.5px;text-align:center;
+}
+.disclaimer strong{color:rgba(255,199,44,0.7);}
+
+/* ── HERO ── */
+.hero{
+  position:relative;overflow:hidden;
+  background:linear-gradient(160deg,#0a1628 0%,#0d1f40 40%,#0f2755 100%);
+  padding:72px 48px 60px;text-align:center;
+  border-bottom:1px solid var(--border);
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(0,94,184,0.25) 0%,transparent 70%);
+}
+.hero-eyebrow{
+  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--yellow);margin-bottom:20px;opacity:0;animation:fadeUp 0.6s 0.1s forwards;
+}
+.hero h2{
+  font-size:clamp(2rem,4vw,3.5rem);font-weight:800;color:#fff;
+  line-height:1.1;margin-bottom:14px;
+  opacity:0;animation:fadeUp 0.7s 0.25s forwards;
+}
+.hero h2 em{color:var(--yellow);font-style:normal;}
+.hero-sub{
+  font-size:15px;color:var(--muted);max-width:560px;margin:0 auto 40px;
+  opacity:0;animation:fadeUp 0.7s 0.4s forwards;
+}
+.hero-stats{
+  display:flex;justify-content:center;gap:40px;flex-wrap:wrap;
+  opacity:0;animation:fadeUp 0.7s 0.55s forwards;
+}
+.hero-stat{text-align:center;}
+.hero-stat .big{font-size:2.4rem;font-weight:800;color:var(--yellow);line-height:1;}
+.hero-stat .label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:6px;}
+.hero-divider{width:1px;height:60px;background:var(--border);align-self:center;}
+
+/* ── TABS ── */
+.tab-bar{
+  background:var(--mid);border-bottom:1px solid var(--border);
+  display:flex;overflow-x:auto;padding:0 32px;gap:0;
+  position:sticky;top:69px;z-index:900;
+}
+.tab-bar::-webkit-scrollbar{height:3px;}
+.tab-bar::-webkit-scrollbar-thumb{background:var(--border);}
+.tab-btn{
+  font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  padding:16px 20px;color:var(--muted);cursor:pointer;border:none;background:none;
+  border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;
+  display:flex;align-items:center;gap:7px;
+}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{color:var(--yellow);border-bottom-color:var(--yellow);}
+.tab-icon{font-size:13px;}
+
+/* ── CONTENT PANELS ── */
+.panels{padding:0 32px 60px;}
+.panel{display:none;padding-top:40px;}
+.panel.active{display:block;}
+
+/* ── SECTION TITLES ── */
+.section-label{
+  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--yellow);margin-bottom:10px;
+}
+.section-title{font-size:1.9rem;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.2;}
+.section-desc{font-size:14px;color:var(--muted);max-width:680px;line-height:1.7;margin-bottom:36px;}
+
+/* ── CARD GRID ── */
+.card-grid{display:grid;gap:18px;}
+.card-grid-2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr));}
+.card-grid-3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+.card-grid-4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}
+
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:24px;position:relative;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;
+}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.4);}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--yellow);}
+.card.blue-top::before{background:var(--blue);}
+.card-icon{font-size:2rem;margin-bottom:14px;}
+.card-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.card-value{font-size:2rem;font-weight:800;color:var(--yellow);line-height:1;margin-bottom:6px;}
+.card-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:8px;}
+.card-body{font-size:13px;color:var(--muted);line-height:1.7;}
+.card-pct{
+  font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);
+  background:rgba(255,255,255,0.06);padding:2px 8px;border-radius:10px;
+  display:inline-block;margin-top:6px;
+}
+
+/* ── FUNDING BAR ── */
+.funding-total{
+  background:linear-gradient(135deg,var(--card),#1a3560);
+  border:1px solid var(--border);border-radius:12px;padding:32px;
+  display:flex;align-items:center;gap:32px;margin-bottom:28px;
+  position:relative;overflow:hidden;
+}
+.funding-total::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 50%,rgba(255,199,44,0.06) 0%,transparent 60%);}
+.ft-label{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.ft-amount{font-size:3.5rem;font-weight:800;color:var(--yellow);line-height:1;}
+.ft-period{font-size:13px;color:var(--muted);margin-top:4px;}
+.ft-bar{flex:1;display:flex;flex-direction:column;gap:8px;}
+.bar-row{display:flex;align-items:center;gap:10px;}
+.bar-label{font-size:12px;color:var(--text);width:160px;flex-shrink:0;}
+.bar-track{flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;}
+.bar-fill.yellow{background:var(--yellow);}
+.bar-fill.blue{background:var(--blue);}
+.bar-fill.teal{background:#2dd4bf;}
+.bar-fill.slate{background:#64748b;}
+.bar-fill.purple{background:#a78bfa;}
+.bar-fill.green{background:#34d399;}
+.bar-pct{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);width:28px;text-align:right;}
+
+/* ── DONUT CHART ── */
+.donut-wrap{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap;}
+.donut-legend{flex:1;min-width:260px;display:flex;flex-direction:column;gap:5px;}
+.wli{display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 8px;border-radius:6px;transition:all .15s;}
+.wli:hover{background:rgba(255,255,255,0.04);}
+.wli-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.wli-name{flex:1;font-size:11px;color:var(--text);}
+.wli-amt{font-size:11px;font-weight:700;white-space:nowrap;}
+.wli-pct{font-size:10px;color:var(--muted);width:32px;text-align:right;}
+.wins-detail{display:none;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:10px;}
+.wins-detail.show{display:block;}
+.wins-detail-title{font-weight:700;font-size:12px;color:var(--text);margin-bottom:6px;}
+.wins-item-row{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-bottom:1px solid var(--border);font-size:11px;}
+.wins-item-row:last-child{border-bottom:none;}
+
+/* ── PROGRESS TILES ── */
+.progress-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:32px;}
+.prog-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;}
+.prog-label{font-size:12px;font-weight:600;color:#fff;margin-bottom:12px;}
+.prog-track{height:10px;background:rgba(255,255,255,0.06);border-radius:5px;overflow:hidden;margin-bottom:8px;}
+.prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--blue),var(--yellow));}
+.prog-pct{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--yellow);}
+.prog-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* ── ASSET TILES ── */
+.asset-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+@media(max-width:700px){.asset-grid{grid-template-columns:repeat(2,1fr);}}
+.asset-tile{
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:18px;text-align:center;transition:border-color 0.2s;
+}
+.asset-tile:hover{border-color:rgba(0,94,184,0.5);}
+.asset-num{font-size:2rem;font-weight:800;color:var(--yellow);}
+.asset-name{font-size:11px;color:var(--muted);margin-top:4px;font-family:'DM Mono',monospace;letter-spacing:0.5px;}
+.asset-emoji{font-size:1.6rem;margin-bottom:8px;}
+
+/* ── LIST ITEMS ── */
+.item-list{display:flex;flex-direction:column;gap:10px;}
+.item-row{
+  display:flex;align-items:flex-start;gap:12px;
+  background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 18px;
+}
+.item-dot{width:8px;height:8px;border-radius:50%;background:var(--yellow);flex-shrink:0;margin-top:5px;}
+.item-dot.blue{background:var(--blue);}
+.item-text{font-size:13px;color:var(--text);line-height:1.6;}
+.item-text strong{color:#fff;}
+
+/* ── STEPS TIMELINE ── */
+.steps{display:flex;gap:0;align-items:stretch;overflow:hidden;border-radius:10px;margin-bottom:28px;}
+.step{flex:1;background:var(--card);border:1px solid var(--border);padding:20px 16px;text-align:center;position:relative;transition:background 0.2s;}
+.step::after{content:'▶';position:absolute;right:-12px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--border);z-index:1;}
+.step:last-child::after{display:none;}
+.step.current{background:rgba(0,94,184,0.25);border-color:rgba(0,94,184,0.5);}
+.step-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:6px;}
+.step-name{font-size:12px;font-weight:600;color:#fff;line-height:1.3;}
+.step-badge{display:inline-block;font-family:'DM Mono',monospace;font-size:9px;background:var(--yellow);color:#000;padding:2px 8px;border-radius:10px;margin-top:6px;}
+@media(max-width:700px){
+  .steps{flex-direction:column;}
+  .step::after{content:'▼';right:auto;left:50%;transform:translateX(-50%);bottom:-12px;top:auto;}
+}
+
+/* ── FIBER CORRIDORS ── */
+.corridor-list{display:flex;flex-direction:column;gap:10px;}
+.corridor-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:16px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 20px;}
+.corridor-name{font-size:13px;font-weight:600;color:#fff;}
+.corridor-sub{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px;}
+.status-pill{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;padding:4px 12px;border-radius:20px;white-space:nowrap;font-weight:500;}
+.pill-done{background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.35);color:#34d399;}
+.pill-construction{background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.35);color:#fbbf24;}
+.pill-design{background:rgba(0,94,184,0.2);border:1px solid rgba(0,94,184,0.4);color:#60a5fa;}
+
+/* ── WHAT'S NEXT FOCUS AREAS ── */
+.focus-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;}
+.focus-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;position:relative;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;}
+.focus-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.4);}
+.focus-num{font-family:'DM Mono',monospace;font-size:3rem;font-weight:700;color:rgba(255,199,44,0.08);position:absolute;top:12px;right:16px;line-height:1;}
+.focus-icon{font-size:2rem;margin-bottom:14px;}
+.focus-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:10px;}
+.focus-items{display:flex;flex-direction:column;gap:6px;}
+.focus-item{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;}
+.focus-item::before{content:'→';color:var(--yellow);font-size:12px;flex-shrink:0;}
+
+/* ── SVG ICON CARDS ── */
+.svg-icon{display:flex;justify-content:center;align-items:center;margin-bottom:12px;}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(16px);transition:opacity 0.5s,transform 0.5s;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* ── FOOTER ── */
+footer{
+  background:var(--mid);border-top:1px solid var(--border);
+  padding:24px 32px;display:flex;justify-content:space-between;align-items:center;
+  font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;flex-wrap:wrap;gap:12px;
+}
+footer span{color:var(--yellow);}
+
+/* ── MOBILE ── */
+@media(max-width:600px){
+  header{padding:12px 16px;}
+  .hero{padding:48px 20px 40px;}
+  .tab-bar{padding:0 16px;}
+  .panels{padding:0 16px 40px;}
+  .funding-total{flex-direction:column;}
+  .asset-grid{grid-template-columns:repeat(2,1fr);}
+  .disclaimer{padding:8px 16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-left">
+    <div class="header-titles">
+      <h1>Transportation <span>Overview</span></h1>
+      <p>Concord, CA · Public Works</p>
+    </div>
+  </div>
+  <nav style="display:flex;align-items:center;gap:20px;">
+    <a href="transportation_overview.html" style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--yellow);text-decoration:none;border-bottom:2px solid var(--yellow);padding-bottom:2px;">Overview</a>
+    <a href="about_abhishek_parikh.html" style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--yellow)'" onmouseout="this.style.color='var(--muted)'">About</a>
+  </nav>
+</header>
+
+<!-- DISCLAIMER -->
+<div class="disclaimer">
+  <strong>Note:</strong> This is an independent professional portfolio site and is not an official website of the City of Concord. Content reflects the author's professional work and perspectives.
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Abhishek Parikh, T.E. · Transportation Professional</div>
+  <h2>Building a <em>Safer, Smarter</em><br>Connected Concord</h2>
+  <p class="hero-sub">A comprehensive look at transportation funding, infrastructure achievements, and the technology-driven future of Concord's streets.</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="big">$42.8M</div>
+      <div class="label">Total Funded · All Sources</div>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat">
+      <div class="big">111</div>
+      <div class="label">Signal Controllers Upgraded</div>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat">
+      <div class="big">5</div>
+      <div class="label">Active Fiber Corridors</div>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat">
+      <div class="big">4</div>
+      <div class="label">Strategic Focus Areas</div>
+    </div>
+  </div>
+</section>
+
+<!-- TAB BAR -->
+<nav class="tab-bar" role="tablist">
+  <button class="tab-btn active" onclick="switchTab('funding',this)" role="tab">
+    <span class="tab-icon">💰</span>Funding Wins
+  </button>
+  <button class="tab-btn" onclick="switchTab('safety',this)" role="tab">
+    <span class="tab-icon">🛡️</span>Traffic Safety
+  </button>
+  <button class="tab-btn" onclick="switchTab('signals',this)" role="tab">
+    <span class="tab-icon">🚦</span>Signal Upgrades
+  </button>
+  <button class="tab-btn" onclick="switchTab('pedbiike',this)" role="tab">
+    <span class="tab-icon">🚲</span>Ped &amp; Bike
+  </button>
+  <button class="tab-btn" onclick="switchTab('whatsnext',this)" role="tab">
+    <span class="tab-icon">🔗</span>Connecting It All
+  </button>
+</nav>
+
+<div class="panels">
+
+<!-- ══════════ FUNDING WINS ══════════ -->
+<section id="tab-funding" class="panel active">
+  <div class="reveal">
+    <div class="section-label">2017 – 2024 · All Sources</div>
+    <h2 class="section-title">Funding Portfolio — $42.8M Secured</h2>
+    <p class="section-desc">Competitive grants secured across HSIP, Active Transportation, Smart Signals, Planning, and SS4A programs — spanning traffic safety, signal modernization, active transportation, parking, and planning studies. Hover the chart to explore each category.</p>
+  </div>
+
+  <!-- Interactive Donut + Legend -->
+  <div class="card reveal" style="margin-bottom:20px;padding:24px;">
+    <div class="section-label" style="margin-bottom:16px;">Funding Portfolio by Category — Hover to Explore</div>
+    <div class="donut-wrap">
+      <div style="flex:0 0 280px;position:relative;">
+        <canvas id="wins-donut" width="280" height="280" style="display:block;"></canvas>
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;width:110px;">
+          <div id="wins-ctr-val" style="font-size:16px;font-weight:800;color:var(--text);">$42.8M</div>
+          <div id="wins-ctr-lbl" style="font-size:9px;color:var(--muted);margin-top:3px;line-height:1.5;font-family:'DM Mono',monospace;">Total Funded<br>All Sources</div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:260px;">
+        <div id="wins-legend" class="donut-legend"></div>
+        <div id="wins-detail" class="wins-detail">
+          <div id="wins-detail-title" class="wins-detail-title"></div>
+          <div id="wins-detail-amt" style="margin-bottom:8px;"></div>
+          <div id="wins-detail-items"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grand total bar -->
+  <div class="reveal" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
+    <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;">Grand Total — All Funded Sources · 2017–2024</div>
+    <div style="font-size:22px;font-weight:800;color:var(--yellow);">$42.8M</div>
+  </div>
+
+  <!-- Category breakdown cards -->
+  <div class="reveal">
+    <div class="section-label" style="margin-bottom:16px;">By Category</div>
+    <div class="card-grid card-grid-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
+      <div class="card">
+        <div class="card-label">HSIP Cycles 9–12</div>
+        <div class="card-value" style="color:#5b9cf6;">$24.1M</div>
+        <div class="card-body">Signal infrastructure, streetlighting, fluorescent signs, RRFB crosswalks, bike lane enhancements, and LPI phasing across 4 competitive cycles.</div>
+        <div class="card-pct">56.3% of portfolio</div>
+      </div>
+      <div class="card blue-top">
+        <div class="card-label">Active Transportation</div>
+        <div class="card-value" style="color:#f5a623;">$10.8M</div>
+        <div class="card-body">AHSC Downtown Bike Corridor, OBAG3+ATP Willow Pass Cycle Track, OBAG3 Galindo Multimodal Corridor.</div>
+        <div class="card-pct">25.3% of portfolio</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Technology &amp; Smart Signals</div>
+        <div class="card-value" style="color:#3ecf8e;">$6.4M</div>
+        <div class="card-body">MTC IDEA Transit Signal Priority, Federal Earmarks (Smart Signal / HSIP gap), OBAG3 Countywide Smart Signal (50 intersections).</div>
+        <div class="card-pct">15.0% of portfolio</div>
+      </div>
+      <div class="card blue-top">
+        <div class="card-label">Planning &amp; Technical Assistance</div>
+        <div class="card-value" style="color:#00d9c0;">$766K</div>
+        <div class="card-body">Sustainable Transportation Planning grants for Willow Pass/Cowell/Galindo and Pine Hollow; MTC PDA grants for VMT thresholds and corridor planning.</div>
+        <div class="card-pct">1.8% of portfolio</div>
+      </div>
+      <div class="card">
+        <div class="card-label">SS4A / CSAP</div>
+        <div class="card-value" style="color:#ff6b6b;">$400K</div>
+        <div class="card-body">SS4A Action Plan grant funding Concord's Comprehensive Safety Action Plan / Vision Zero Action Plan development.</div>
+        <div class="card-pct">0.9% of portfolio</div>
+      </div>
+      <div class="card blue-top">
+        <div class="card-label">Signal Operations</div>
+        <div class="card-value" style="color:#b47fff;">$263K</div>
+        <div class="card-body">MTC PASS signal timing grants for Ygnacio Valley / Port Chicago / East St corridors and Clayton / Galindo-Monument / Treat (54 intersections).</div>
+        <div class="card-pct">0.6% of portfolio</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ TRAFFIC SAFETY ══════════ -->
+<section id="tab-safety" class="panel">
+  <div class="reveal">
+    <div class="section-label">$18M Awarded via HSIP</div>
+    <h2 class="section-title">Traffic Safety Program</h2>
+    <p class="section-desc">The largest funding category — $18 million — targets every layer of the street safety system, from signals and signing to lighting and active transportation zones.</p>
+  </div>
+
+  <div class="card-grid card-grid-2 reveal" style="margin-bottom:28px;">
+    <div class="card">
+      <div class="card-icon">🚦</div>
+      <div class="card-title">Traffic Signal Safety</div>
+      <div class="item-list" style="margin-top:12px;">
+        <div class="item-row"><div class="item-dot"></div><div class="item-text"><strong>Retro-reflective backplates</strong> — dramatically improve signal visibility at night and in adverse weather.</div></div>
+        <div class="item-row"><div class="item-dot"></div><div class="item-text"><strong>Pedestrian countdown timers</strong> — give pedestrians clear guidance on crossing time remaining.</div></div>
+        <div class="item-row"><div class="item-dot"></div><div class="item-text"><strong>Accessible push buttons</strong> — Accessible Pedestrian Signal (APS) devices with audio and tactile feedback for visually impaired users.</div></div>
+        <div class="item-row"><div class="item-dot"></div><div class="item-text"><strong>ADA curb ramp upgrades</strong> — bringing intersections into full federal accessibility compliance.</div></div>
+      </div>
+    </div>
+    <div class="card blue-top">
+      <div class="card-icon">💡</div>
+      <div class="card-title">Signage &amp; Lighting</div>
+      <div class="item-list" style="margin-top:12px;">
+        <div class="item-row"><div class="item-dot blue"></div><div class="item-text"><strong>LED conversion</strong> — replacing induction streetlights citywide; lower energy cost, longer life, better uniformity.</div></div>
+        <div class="item-row"><div class="item-dot blue"></div><div class="item-text"><strong>Fluorescent sheeting on signs</strong> — 8,000 signs replaced. High-visibility retroreflective material performs 3× better in darkness and poor light.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <div class="section-label" style="margin-bottom:16px;">Bike / Ped &amp; School Zone Safety Countermeasures</div>
+    <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
+
+      <!-- High-visibility crosswalks -->
+      <div class="card">
+        <div class="svg-icon">
+          <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+            <!-- road surface -->
+            <rect x="2" y="2" width="48" height="48" rx="4" fill="rgba(255,255,255,0.03)"/>
+            <!-- ladder crosswalk: two vertical edge rails -->
+            <rect x="8"  y="8" width="4" height="36" rx="1" fill="#FFC72C"/>
+            <rect x="40" y="8" width="4" height="36" rx="1" fill="#FFC72C"/>
+            <!-- horizontal rungs between the rails -->
+            <rect x="12" y="10" width="28" height="5" rx="1" fill="#fff" opacity="0.85"/>
+            <rect x="12" y="19" width="28" height="5" rx="1" fill="#fff" opacity="0.85"/>
+            <rect x="12" y="28" width="28" height="5" rx="1" fill="#fff" opacity="0.85"/>
+            <rect x="12" y="37" width="28" height="5" rx="1" fill="#fff" opacity="0.85"/>
+            <!-- walking figure crossing (blue, centred) -->
+            <circle cx="26" cy="6"  r="3"   fill="#005EB8"/>
+            <line x1="26" y1="9"  x2="26" y2="16" stroke="#005EB8" stroke-width="2.2" stroke-linecap="round"/>
+            <line x1="26" y1="12" x2="22"  y2="15" stroke="#005EB8" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="26" y1="16" x2="23"  y2="21" stroke="#005EB8" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="26" y1="16" x2="29"  y2="21" stroke="#005EB8" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="card-title">High-Visibility Crosswalks</div>
+        <div class="card-body">Ladder striping pattern — parallel edge lines with transverse rungs — visible to drivers from significantly greater distances than standard transverse lines.</div>
+      </div>
+
+      <!-- RRFB -->
+      <div class="card blue-top">
+        <div class="svg-icon">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="56" height="56" rx="11" fill="#0e1520"/>
+  <!-- amber diamond (warning sign) centred in top portion -->
+  <g transform="translate(28,20) rotate(45)">
+    <rect x="-13" y="-13" width="26" height="26" rx="2" fill="#FFC72C"/>
+    <rect x="-11" y="-11" width="22" height="22" rx="1.5" fill="none" stroke="#0e1520" stroke-width="1.2"/>
+  </g>
+  <!-- walking figure inside diamond, dark -->
+  <circle cx="28" cy="12" r="2.6" fill="#0e1520"/>
+  <line x1="28" y1="14.5" x2="28" y2="20.5" stroke="#0e1520" stroke-width="2"   stroke-linecap="round"/>
+  <line x1="28" y1="17"   x2="24"   y2="20"   stroke="#0e1520" stroke-width="1.7" stroke-linecap="round"/>
+  <line x1="28" y1="20.5" x2="25"   y2="25"   stroke="#0e1520" stroke-width="1.7" stroke-linecap="round"/>
+  <line x1="28" y1="20.5" x2="31"   y2="25"   stroke="#0e1520" stroke-width="1.7" stroke-linecap="round"/>
+  <!-- connector nub -->
+  <rect x="25" y="33" width="6" height="5" rx="1" fill="#2a3a50"/>
+  <!-- beacon housing pill -->
+  <rect x="7" y="38" width="42" height="13" rx="5" fill="#0e1520" stroke="#FFC72C" stroke-width="1.6"/>
+  <!-- left cell: bright amber -->
+  <rect x="10" y="41" width="16" height="7" rx="2.5" fill="#FFC72C"/>
+  <!-- right cell: dim amber -->
+  <rect x="30" y="41" width="16" height="7" rx="2.5" fill="#5a3e00"/>
+</svg>
+        </div>
+                <div class="card-title">RRFB Beacons</div>
+        <div class="card-body">Rectangular Rapid Flashing Beacons at uncontrolled crossings — high-visibility amber flash pattern, federally recommended countermeasure.</div>
+      </div>
+
+      <!-- Bike Boxes & Delineators -->
+      <div class="card">
+        <div class="svg-icon">
+          <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+            <!-- road lanes -->
+            <rect x="4" y="4" width="44" height="44" rx="3" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            <!-- bike box (green) -->
+            <rect x="8" y="30" width="36" height="14" rx="2" fill="rgba(52,211,153,0.25)" stroke="#34d399" stroke-width="1.5"/>
+            <!-- bike symbol in box -->
+            <circle cx="20" cy="37" r="4" fill="none" stroke="#34d399" stroke-width="1.5"/>
+            <circle cx="32" cy="37" r="4" fill="none" stroke="#34d399" stroke-width="1.5"/>
+            <line x1="20" y1="37" x2="26" y2="31" stroke="#34d399" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="26" y1="31" x2="32" y2="37" stroke="#34d399" stroke-width="1.5" stroke-linecap="round"/>
+            <!-- delineator posts -->
+            <rect x="10" y="20" width="4" height="8" rx="2" fill="#FFC72C"/>
+            <rect x="20" y="20" width="4" height="8" rx="2" fill="#FFC72C"/>
+            <rect x="30" y="20" width="4" height="8" rx="2" fill="#FFC72C"/>
+            <rect x="40" y="20" width="4" height="8" rx="2" fill="#FFC72C"/>
+          </svg>
+        </div>
+        <div class="card-title">Bike Boxes &amp; Delineators</div>
+        <div class="card-body">Protected green bike space at signal stop bars plus flexible post delineators to physically separate cyclists from vehicle lanes.</div>
+      </div>
+
+      <!-- Bulbout -->
+      <div class="card blue-top">
+        <div class="svg-icon">
+          <!-- Street bulbout: curb extension narrowing the crossing width -->
+          <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+            <!-- roadway -->
+            <rect x="4" y="4" width="44" height="44" rx="2" fill="rgba(255,255,255,0.03)"/>
+            <!-- sidewalk top-left bulbout block -->
+            <rect x="4" y="4" width="16" height="16" rx="2" fill="#005EB8" opacity="0.7"/>
+            <!-- sidewalk top-right bulbout block -->
+            <rect x="32" y="4" width="16" height="16" rx="2" fill="#005EB8" opacity="0.7"/>
+            <!-- crosswalk stripes (narrowed by bulbouts) -->
+            <rect x="20" y="6" width="12" height="3" rx="1" fill="#FFC72C"/>
+            <rect x="20" y="11" width="12" height="3" rx="1" fill="#FFC72C"/>
+            <rect x="20" y="16" width="12" height="3" rx="1" fill="#FFC72C"/>
+            <!-- pedestrian arrow indicating shorter crossing -->
+            <line x1="26" y1="22" x2="26" y2="46" stroke="rgba(255,199,44,0.5)" stroke-width="1.5" stroke-dasharray="3 2"/>
+            <!-- dimension arrows -->
+            <line x1="21" y1="20" x2="31" y2="20" stroke="#34d399" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="21" y1="18" x2="21" y2="22" stroke="#34d399" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="31" y1="18" x2="31" y2="22" stroke="#34d399" stroke-width="1.5" stroke-linecap="round"/>
+            <!-- label -->
+            <text x="26" y="45" text-anchor="middle" font-size="5" fill="#34d399" font-family="monospace">SHORTER</text>
+          </svg>
+        </div>
+        <div class="card-title">Bulbouts (Curb Extensions)</div>
+        <div class="card-body">Sidewalk extensions that project into the parking lane — shortening the pedestrian crossing distance and calming turning vehicle speeds.</div>
+      </div>
+
+      <!-- Blinking Stop Signs -->
+      <div class="card">
+        <div class="svg-icon">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- glow backdrop -->
+  <polygon points="20,4 36,4 52,20 52,36 36,52 20,52 4,36 4,20" fill="rgba(200,0,0,0.15)"/>
+  <!-- octagon body -->
+  <polygon points="20,6 36,6 50,20 50,36 36,50 20,50 6,36 6,20" fill="#CC0000"/>
+  <!-- white border ring -->
+  <polygon points="20,6 36,6 50,20 50,36 36,50 20,50 6,36 6,20" fill="none" stroke="#fff" stroke-width="2.5"/>
+  <!-- STOP text -->
+  <text x="28" y="32" text-anchor="middle" font-size="11" font-weight="900" fill="#fff" font-family="Arial Black,Arial,sans-serif" letter-spacing="-0.5">STOP</text>
+  <!-- amber LED dots — one per flat edge, glowing -->
+  <!-- top edge -->
+  <circle cx="28" cy="4"  r="2.4" fill="#FF9800"/><circle cx="28" cy="4"  r="4" fill="rgba(255,152,0,0.3)"/>
+  <!-- top-right corner -->
+  <circle cx="44" cy="10" r="2.4" fill="#FF9800"/><circle cx="44" cy="10" r="4" fill="rgba(255,152,0,0.3)"/>
+  <!-- right edge -->
+  <circle cx="52" cy="28" r="2.4" fill="#FF9800"/><circle cx="52" cy="28" r="4" fill="rgba(255,152,0,0.3)"/>
+  <!-- bottom-right corner -->
+  <circle cx="44" cy="46" r="2.4" fill="#FF9800"/><circle cx="44" cy="46" r="4" fill="rgba(255,152,0,0.3)"/>
+  <!-- bottom edge -->
+  <circle cx="28" cy="52" r="2.4" fill="#FF9800"/><circle cx="28" cy="52" r="4" fill="rgba(255,152,0,0.3)"/>
+  <!-- bottom-left corner -->
+  <circle cx="12" cy="46" r="2.4" fill="#FF9800"/><circle cx="12" cy="46" r="4" fill="rgba(255,152,0,0.3)"/>
+  <!-- left edge -->
+  <circle cx="4"  cy="28" r="2.4" fill="#FF9800"/><circle cx="4"  cy="28" r="4" fill="rgba(255,152,0,0.3)"/>
+  <!-- top-left corner -->
+  <circle cx="12" cy="10" r="2.4" fill="#FF9800"/><circle cx="12" cy="10" r="4" fill="rgba(255,152,0,0.3)"/>
+</svg>
+        </div>
+                <div class="card-title">Blinking Stop Signs</div>
+        <div class="card-body">LED-enhanced stop signs with amber border lights that flash to draw driver attention — improving compliance at low-volume intersections near schools.</div>
+      </div>
+
+      <!-- APS -->
+      <div class="card blue-top">
+        <div class="svg-icon">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- yellow device body -->
+  <rect x="8" y="4" width="40" height="52" rx="8" fill="#FFC72C"/>
+  <!-- white sign panel (upper portion) -->
+  <rect x="11" y="7" width="34" height="30" rx="3" fill="#ffffff" stroke="#222" stroke-width="1.2"/>
+  <!-- row 1: walking figure (START CROSSING) -->
+  <rect x="11" y="7" width="34" height="9" rx="3" fill="#f8f8f8" stroke="#ddd" stroke-width="0.5"/>
+  <circle cx="19" cy="11.5" r="1.8" fill="#111"/>
+  <line x1="19" y1="13.3" x2="19" y2="17" stroke="#111" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="19" y1="14.5" x2="16.5" y2="16.5" stroke="#111" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="19" y1="17" x2="16.8" y2="19.5" stroke="#111" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="19" y1="17" x2="21.2" y2="19.5" stroke="#111" stroke-width="1.2" stroke-linecap="round"/>
+  <!-- row 2: orange flashing hand (DON'T START) -->
+  <rect x="11" y="16" width="34" height="9" fill="#fff5e6" stroke="#ddd" stroke-width="0.5"/>
+  <!-- simplified hand shape orange -->
+  <rect x="16" y="18" width="7" height="5" rx="1" fill="#FF8C00"/>
+  <rect x="17" y="17" width="1.2" height="3" rx="0.5" fill="#FF8C00"/>
+  <rect x="18.5" y="17" width="1.2" height="3" rx="0.5" fill="#FF8C00"/>
+  <rect x="20" y="17.2" width="1.2" height="2.8" rx="0.5" fill="#FF8C00"/>
+  <rect x="21.5" y="17.5" width="1.2" height="2.5" rx="0.5" fill="#FF8C00"/>
+  <!-- row 3: solid hand (DON'T CROSS) -->
+  <rect x="11" y="25" width="34" height="9" fill="#fff" stroke="#ddd" stroke-width="0.5"/>
+  <rect x="16" y="27" width="7" height="5" rx="1" fill="#FF8C00"/>
+  <rect x="17" y="26" width="1.2" height="3" rx="0.5" fill="#FF8C00"/>
+  <rect x="18.5" y="26" width="1.2" height="3" rx="0.5" fill="#FF8C00"/>
+  <rect x="20" y="26.2" width="1.2" height="2.8" rx="0.5" fill="#FF8C00"/>
+  <rect x="21.5" y="26.5" width="1.2" height="2.5" rx="0.5" fill="#FF8C00"/>
+  <!-- row 4: push button arrow row -->
+  <rect x="11" y="34" width="34" height="3" fill="#eee" stroke="#ddd" stroke-width="0.5"/>
+  <line x1="15" y1="35.5" x2="41" y2="35.5" stroke="#111" stroke-width="1.4" stroke-linecap="round"/>
+  <polyline points="18,34.2 15,35.5 18,36.8" stroke="#111" stroke-width="1.2" fill="none" stroke-linejoin="round"/>
+  <!-- large dark button at bottom -->
+  <circle cx="28" cy="49" r="9" fill="#222"/>
+  <circle cx="28" cy="49" r="7" fill="#333"/>
+  <!-- left arrow on button -->
+  <line x1="23" y1="49" x2="33" y2="49" stroke="#ccc" stroke-width="2" stroke-linecap="round"/>
+  <polyline points="26,46.5 23,49 26,51.5" stroke="#ccc" stroke-width="1.8" fill="none" stroke-linejoin="round"/>
+</svg>
+        </div>
+        <div class="card-title">Accessible Pedestrian Signal (APS)</div>
+        <div class="card-body">Push-button devices with audio tones, speech messages, and vibrotactile feedback — giving visually impaired pedestrians safe crossing guidance.</div>
+      </div>
+
+      <!-- Advance Warning Signs -->
+      <div class="card">
+        <div class="card-icon">⚠️</div>
+        <div class="card-title">Advance Warning Signs</div>
+        <div class="card-body">School zone and pedestrian advance warning signs alerting drivers well ahead of conflict points — paired with fluorescent yellow-green sheeting for maximum visibility.</div>
+      </div>
+
+      <!-- Radar Feedback Sign -->
+      <div class="card">
+        <div class="svg-icon">
+          <!-- Radar feedback sign: speed limit sign with digital speed display -->
+          <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+            <!-- sign panel -->
+            <rect x="6" y="4" width="40" height="28" rx="3" fill="#1e3a5f" stroke="#FFC72C" stroke-width="1.5"/>
+            <!-- YOUR SPEED label -->
+            <text x="26" y="13" text-anchor="middle" font-size="5" fill="#7a90b0" font-family="monospace" font-weight="500">YOUR SPEED</text>
+            <!-- digital speed readout -->
+            <rect x="12" y="16" width="28" height="12" rx="2" fill="#0a1628"/>
+            <text x="26" y="25.5" text-anchor="middle" font-size="10" fill="#FFC72C" font-family="monospace" font-weight="700">28</text>
+            <!-- speed limit sign below -->
+            <rect x="14" y="35" width="24" height="15" rx="3" fill="#fff" stroke="#000" stroke-width="1.5"/>
+            <text x="26" y="42" text-anchor="middle" font-size="5" fill="#000" font-family="Arial,sans-serif">SPEED</text>
+            <text x="26" y="48" text-anchor="middle" font-size="5" fill="#000" font-family="Arial,sans-serif">LIMIT 25</text>
+            <!-- post -->
+            <line x1="26" y1="33" x2="26" y2="35" stroke="#7a90b0" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="card-title">Radar Feedback Signs</div>
+        <div class="card-body">Dynamic speed feedback signs display the driver's actual speed alongside the posted limit — studies show reductions of 5–10 mph in school zones.</div>
+      </div>
+
+      <!-- Annual Safety Assessments -->
+      <div class="card blue-top">
+        <div class="card-icon">📋</div>
+        <div class="card-title">Annual Safety Assessments</div>
+        <div class="card-body">Annual school safety reviews, midblock crossing evaluations, speed limit reduction analysis, and conversion of static no-turn signs to dynamic LED versions.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SIGNAL UPGRADES ══════════ -->
+<section id="tab-signals" class="panel">
+  <div class="reveal">
+    <div class="section-label">$12.1M Awarded</div>
+    <h2 class="section-title">Signal System Modernization</h2>
+    <p class="section-desc">Concord's signal network has been fundamentally transformed — moving from isolated, aging controllers to a connected, remotely accessible, data-driven system.</p>
+  </div>
+
+  <!-- ITS Maturity Roadmap -->
+  <div class="reveal" style="margin-bottom:32px;">
+    <div class="section-label" style="margin-bottom:16px;">Five Steps to Integrated System — We Are at Step 4</div>
+    <div class="steps">
+      <div class="step"><div class="step-num">01</div><div class="step-name">Signal System</div></div>
+      <div class="step"><div class="step-num">02</div><div class="step-name">Connected Signal System</div></div>
+      <div class="step"><div class="step-num">03</div><div class="step-name">Signal System with Fiber Optics</div></div>
+      <div class="step current"><div class="step-num">04</div><div class="step-name">Connected Transportation System</div><div class="step-badge">We are here</div></div>
+      <div class="step"><div class="step-num">05</div><div class="step-name">Integrated City System</div></div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="reveal" style="margin-bottom:32px;">
+    <div class="section-label" style="margin-bottom:16px;">Signal System Improvement Progress</div>
+    <div class="progress-grid">
+      <div class="prog-card">
+        <div class="prog-label">Controllers &amp; ATC Cabinets</div>
+        <div class="prog-track"><div class="prog-fill" style="width:89%"></div></div>
+        <div class="prog-pct">89%</div>
+        <div class="prog-sub">111 of 125 controllers upgraded</div>
+      </div>
+      <div class="prog-card">
+        <div class="prog-label">Video Detection</div>
+        <div class="prog-track"><div class="prog-fill" style="width:89%"></div></div>
+        <div class="prog-pct">89%</div>
+        <div class="prog-sub">134 units installed</div>
+      </div>
+      <div class="prog-card">
+        <div class="prog-label">Fiber Optic Communication</div>
+        <div class="prog-track"><div class="prog-fill" style="width:57%"></div></div>
+        <div class="prog-pct">57%</div>
+        <div class="prog-sub">86 signal-to-fiber connections</div>
+      </div>
+      <div class="prog-card">
+        <div class="prog-label">Battery Backup Systems</div>
+        <div class="prog-track"><div class="prog-fill" style="width:52%"></div></div>
+        <div class="prog-pct">52%</div>
+        <div class="prog-sub">77 units installed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Asset inventory -->
+  <div class="reveal" style="margin-bottom:32px;">
+    <div class="section-label" style="margin-bottom:16px;">Installed Asset Inventory</div>
+    <div class="asset-grid">
+      <div class="asset-tile"><div class="asset-emoji">📹</div><div class="asset-num">134</div><div class="asset-name">Video Detection</div></div>
+      <div class="asset-tile"><div class="asset-emoji">🚦</div><div class="asset-num">134</div><div class="asset-name">Signal Controllers</div></div>
+      <div class="asset-tile"><div class="asset-emoji"><svg width="28" height="28" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="8" y="4" width="40" height="52" rx="8" fill="#FFC72C"/>
+  <rect x="11" y="7" width="34" height="30" rx="3" fill="#ffffff" stroke="#222" stroke-width="1.2"/>
+  <rect x="11" y="7" width="34" height="9" rx="3" fill="#f8f8f8" stroke="#ddd" stroke-width="0.5"/>
+  <circle cx="19" cy="11.5" r="1.8" fill="#111"/>
+  <line x1="19" y1="13.3" x2="19" y2="17" stroke="#111" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="19" y1="14.5" x2="16.5" y2="16.5" stroke="#111" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="19" y1="17" x2="16.8" y2="19.5" stroke="#111" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="19" y1="17" x2="21.2" y2="19.5" stroke="#111" stroke-width="1.2" stroke-linecap="round"/>
+  <rect x="11" y="16" width="34" height="9" fill="#fff5e6" stroke="#ddd" stroke-width="0.5"/>
+  <rect x="16" y="18" width="7" height="5" rx="1" fill="#FF8C00"/>
+  <rect x="17" y="17" width="1.2" height="3" rx="0.5" fill="#FF8C00"/>
+  <rect x="18.5" y="17" width="1.2" height="3" rx="0.5" fill="#FF8C00"/>
+  <rect x="20" y="17.2" width="1.2" height="2.8" rx="0.5" fill="#FF8C00"/>
+  <rect x="21.5" y="17.5" width="1.2" height="2.5" rx="0.5" fill="#FF8C00"/>
+  <rect x="11" y="25" width="34" height="9" fill="#fff" stroke="#ddd" stroke-width="0.5"/>
+  <rect x="16" y="27" width="7" height="5" rx="1" fill="#FF8C00"/>
+  <rect x="17" y="26" width="1.2" height="3" rx="0.5" fill="#FF8C00"/>
+  <rect x="18.5" y="26" width="1.2" height="3" rx="0.5" fill="#FF8C00"/>
+  <rect x="20" y="26.2" width="1.2" height="2.8" rx="0.5" fill="#FF8C00"/>
+  <rect x="21.5" y="26.5" width="1.2" height="2.5" rx="0.5" fill="#FF8C00"/>
+  <rect x="11" y="34" width="34" height="3" fill="#eee" stroke="#ddd" stroke-width="0.5"/>
+  <line x1="15" y1="35.5" x2="41" y2="35.5" stroke="#111" stroke-width="1.4" stroke-linecap="round"/>
+  <polyline points="18,34.2 15,35.5 18,36.8" stroke="#111" stroke-width="1.2" fill="none" stroke-linejoin="round"/>
+  <circle cx="28" cy="49" r="9" fill="#222"/>
+  <circle cx="28" cy="49" r="7" fill="#333"/>
+  <line x1="23" y1="49" x2="33" y2="49" stroke="#ccc" stroke-width="2" stroke-linecap="round"/>
+  <polyline points="26,46.5 23,49 26,51.5" stroke="#ccc" stroke-width="1.8" fill="none" stroke-linejoin="round"/>
+</svg></div><div class="asset-num">115</div><div class="asset-name">Accessible Ped Signal</div></div>
+      <div class="asset-tile"><div class="asset-emoji">🗄️</div><div class="asset-num">111</div><div class="asset-name">Signal Cabinets</div></div>
+      <div class="asset-tile"><div class="asset-emoji">🔌</div><div class="asset-num">86</div><div class="asset-name">Signal-to-Fiber</div></div>
+      <div class="asset-tile"><div class="asset-emoji">🔋</div><div class="asset-num">77</div><div class="asset-name">Battery Backup</div></div>
+      <div class="asset-tile"><div class="asset-emoji"><svg width="28" height="28" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="56" height="56" rx="11" fill="#0e1520"/><g transform="translate(28,20) rotate(45)"><rect x="-13" y="-13" width="26" height="26" rx="2" fill="#FFC72C"/><rect x="-11" y="-11" width="22" height="22" rx="1.5" fill="none" stroke="#0e1520" stroke-width="1.2"/></g><circle cx="28" cy="12" r="2.6" fill="#0e1520"/><line x1="28" y1="14.5" x2="28" y2="20.5" stroke="#0e1520" stroke-width="2" stroke-linecap="round"/><line x1="28" y1="17" x2="24" y2="20" stroke="#0e1520" stroke-width="1.7" stroke-linecap="round"/><line x1="28" y1="20.5" x2="25" y2="25" stroke="#0e1520" stroke-width="1.7" stroke-linecap="round"/><line x1="28" y1="20.5" x2="31" y2="25" stroke="#0e1520" stroke-width="1.7" stroke-linecap="round"/><rect x="25" y="33" width="6" height="5" rx="1" fill="#2a3a50"/><rect x="7" y="38" width="42" height="13" rx="5" fill="#0e1520" stroke="#FFC72C" stroke-width="1.6"/><rect x="10" y="41" width="16" height="7" rx="2.5" fill="#FFC72C"/><rect x="30" y="41" width="16" height="7" rx="2.5" fill="#5a3e00"/></svg></div><div class="asset-num">31</div><div class="asset-name">RRFB Beacons</div></div>
+      <div class="asset-tile"><div class="asset-emoji">📊</div><div class="asset-num">18</div><div class="asset-name">Radar Feedback Signs</div></div>
+      <div class="asset-tile"><div class="asset-emoji">🛑</div><div class="asset-num">12</div><div class="asset-name">Blinking Stop Signs</div></div>
+    </div>
+  </div>
+
+  <!-- Operations capabilities -->
+  <div class="reveal">
+    <div class="section-label" style="margin-bottom:16px;">New Operational Capabilities</div>
+    <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;">
+
+      <!-- Remote Access -->
+      <div class="card">
+        <div class="svg-icon">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <!-- monitor -->
+            <rect x="6" y="8" width="36" height="24" rx="3" fill="#162b4d" stroke="#005EB8" stroke-width="1.5"/>
+            <!-- screen glow -->
+            <rect x="9" y="11" width="30" height="18" rx="2" fill="rgba(0,94,184,0.3)"/>
+            <!-- signal arcs -->
+            <path d="M18 22 Q24 16 30 22" stroke="#FFC72C" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M15 25 Q24 13 33 25" stroke="#FFC72C" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5"/>
+            <circle cx="24" cy="22" r="2" fill="#FFC72C"/>
+            <!-- stand -->
+            <rect x="21" y="32" width="6" height="4" rx="1" fill="#7a90b0"/>
+            <rect x="16" y="36" width="16" height="3" rx="1.5" fill="#7a90b0"/>
+          </svg>
+        </div>
+        <div class="card-title">Remote Access &amp; Monitoring</div>
+        <div class="card-body">Staff monitor and adjust signal timing from any location — dramatically reducing field visits and enabling faster incident response.</div>
+      </div>
+
+      <!-- Transit Signal Priority -->
+      <div class="card blue-top">
+        <div class="card-icon">🚌</div>
+        <div class="card-title">Transit Signal Priority</div>
+        <div class="card-body">Bus routes receive green light extensions and red light truncations, improving on-time performance without degrading general traffic flow.</div>
+      </div>
+
+      <!-- Adaptive Signal Control -->
+      <div class="card">
+        <div class="svg-icon">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- green road base (isometric cross) -->
+  <rect x="0" y="0" width="56" height="56" rx="6" fill="#1a2e1a"/>
+  <!-- horizontal road band -->
+  <rect x="0" y="22" width="56" height="12" fill="#2a4a2a"/>
+  <!-- vertical road band -->
+  <rect x="22" y="0" width="12" height="56" fill="#2a4a2a"/>
+  <!-- intersection box -->
+  <rect x="22" y="22" width="12" height="12" fill="#233823"/>
+  <!-- lane markings: horizontal dashes -->
+  <rect x="4"  y="27" width="6" height="2" rx="1" fill="rgba(255,255,255,0.4)"/>
+  <rect x="15" y="27" width="5" height="2" rx="1" fill="rgba(255,255,255,0.4)"/>
+  <rect x="36" y="27" width="5" height="2" rx="1" fill="rgba(255,255,255,0.4)"/>
+  <rect x="46" y="27" width="6" height="2" rx="1" fill="rgba(255,255,255,0.4)"/>
+  <!-- lane markings: vertical dashes -->
+  <rect x="27" y="4"  width="2" height="6" rx="1" fill="rgba(255,255,255,0.4)"/>
+  <rect x="27" y="15" width="2" height="5" rx="1" fill="rgba(255,255,255,0.4)"/>
+  <rect x="27" y="36" width="2" height="5" rx="1" fill="rgba(255,255,255,0.4)"/>
+  <rect x="27" y="46" width="2" height="6" rx="1" fill="rgba(255,255,255,0.4)"/>
+  <!-- network connection lines (magenta/pink like in image) -->
+  <rect x="20" y="20" width="16" height="16" rx="2" fill="none" stroke="#e040fb" stroke-width="1.5" stroke-dasharray="2 1.5"/>
+  <!-- signal heads (top and right of intersection) -->
+  <rect x="32" y="17" width="5" height="8" rx="1" fill="#111"/>
+  <circle cx="34.5" cy="19" r="1.2" fill="#ff4444"/>
+  <circle cx="34.5" cy="22" r="1.2" fill="#FFC72C"/>
+  <circle cx="34.5" cy="25" r="1.2" fill="#44cc44"/>
+  <rect x="17" y="32" width="5" height="8" rx="1" fill="#111"/>
+  <circle cx="19.5" cy="34" r="1.2" fill="#ff4444"/>
+  <circle cx="19.5" cy="37" r="1.2" fill="#FFC72C"/>
+  <circle cx="19.5" cy="40" r="1.2" fill="#44cc44"/>
+  <!-- small car shapes -->
+  <rect x="6"  y="24" width="8" height="5" rx="1.5" fill="#5abfbf"/>
+  <rect x="42" y="27" width="8" height="5" rx="1.5" fill="#c8c040"/>
+  <!-- wifi/signal arc (from image's wireless icon) -->
+  <path d="M27 19 Q28 16 29 19" stroke="#e040fb" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <path d="M25 21 Q28 14 31 21" stroke="#e040fb" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.6"/>
+  <circle cx="28" cy="20" r="1" fill="#e040fb"/>
+</svg>
+        </div>
+                <div class="card-title">Adaptive Signal Control</div>
+        <div class="card-body">Willow Pass Road adaptive system is live; Treat Boulevard in progress. Signal phases continuously adjust split, offset, and cycle length to real-time demand.</div>
+      </div>
+
+      <!-- Improved Coordination (time-space diagram) -->
+      <div class="card blue-top">
+        <div class="svg-icon">
+          <!-- Time-space diagram: classic traffic engineering tool for green wave coordination -->
+          <svg width="52" height="48" viewBox="0 0 52 48" fill="none">
+            <!-- axes -->
+            <line x1="6" y1="42" x2="50" y2="42" stroke="#7a90b0" stroke-width="1" stroke-linecap="round"/>
+            <line x1="6" y1="6" x2="6" y2="42" stroke="#7a90b0" stroke-width="1" stroke-linecap="round"/>
+            <!-- axis labels -->
+            <text x="28" y="47" text-anchor="middle" font-size="5" fill="#7a90b0" font-family="monospace">TIME →</text>
+            <text x="3" y="24" text-anchor="middle" font-size="5" fill="#7a90b0" font-family="monospace" transform="rotate(-90,3,24)">SPACE →</text>
+            <!-- intersection 1 green band (green wave) -->
+            <rect x="8" y="10" width="8" height="6" rx="1" fill="#34d399" opacity="0.9"/>
+            <rect x="26" y="10" width="8" height="6" rx="1" fill="#ff6b6b" opacity="0.7"/>
+            <rect x="38" y="10" width="8" height="6" rx="1" fill="#34d399" opacity="0.7"/>
+            <!-- intersection 2 -->
+            <rect x="14" y="22" width="8" height="6" rx="1" fill="#34d399" opacity="0.9"/>
+            <rect x="8" y="22" width="4" height="6" rx="1" fill="#ff6b6b" opacity="0.7"/>
+            <rect x="34" y="22" width="8" height="6" rx="1" fill="#34d399" opacity="0.7"/>
+            <!-- intersection 3 -->
+            <rect x="20" y="33" width="8" height="6" rx="1" fill="#34d399" opacity="0.9"/>
+            <rect x="38" y="33" width="6" height="6" rx="1" fill="#34d399" opacity="0.7"/>
+            <!-- progression band (diagonal green wave line) -->
+            <line x1="8" y1="13" x2="14" y2="25" stroke="#FFC72C" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 1"/>
+            <line x1="14" y1="25" x2="20" y2="36" stroke="#FFC72C" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 1"/>
+          </svg>
+        </div>
+        <div class="card-title">Improved Corridor Coordination</div>
+        <div class="card-body">Time-space diagram–based green wave progression reduces stops and idling along major arterials — cutting travel time and vehicle emissions.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PED & BIKE ══════════ -->
+<section id="tab-pedbiike" class="panel">
+  <div class="reveal">
+    <div class="section-label">$10.8M Awarded for Construction</div>
+    <h2 class="section-title">Bicycle &amp; Pedestrian Projects</h2>
+    <p class="section-desc">Three major capital corridors are transforming how Concordians walk and bike — connected to BART, downtown, and key community destinations.</p>
+  </div>
+
+  <div class="card-grid card-grid-3 reveal" style="margin-bottom:32px;">
+    <div class="card">
+      <div class="card-icon">🏙️</div>
+      <div class="card-title">Downtown Bike Corridor</div>
+      <div class="card-body">Salvio St (Broadway to Grant), Grant St (Salvio to Oak), Oak St (Grant to Galindo). Creates a connected network linking Todos Santos Park to the Concord BART Station.</div>
+    </div>
+    <div class="card blue-top">
+      <div class="card-icon">🛤️</div>
+      <div class="card-title">Galindo St. Multimodal Corridor</div>
+      <div class="card-body">Galindo from Salvio to Clayton and Clayton from Galindo to Grant. A complete streets redesign serving cyclists, pedestrians, and transit riders.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌿</div>
+      <div class="card-title">Willow Pass Bike Lane Connection</div>
+      <div class="card-body">Parkside Dr (Salvio to Willow Pass Rd) and Willow Pass Rd (Parkside to Landana Dr). Connects Willow Pass Community Park and Wren Avenue Elementary.</div>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <div class="section-label" style="margin-bottom:16px;">Implementation Funding Opportunities — Currently Pursuing</div>
+    <div class="card-grid card-grid-2">
+      <div class="card">
+        <div class="card-icon">🏆</div>
+        <div class="card-title">Monument Boulevard — Two-Way Cycle Track</div>
+        <div class="card-body">Install a 1.6-mile Class I shared-use path on Monument Boulevard, from Mohr Lane in the west to Walters Way in the east.</div>
+      </div>
+      <div class="card blue-top">
+        <div class="card-icon">📍</div>
+        <div class="card-title">Pine Hollow Road Improvements</div>
+        <div class="card-body">Bicycle and pedestrian safety improvements between Highlands Elementary and Pine Hollow Middle School. Feasibility study complete.</div>
+      </div>
+      <div class="card blue-top">
+        <div class="card-icon">🔄</div>
+        <div class="card-title">Farm Bureau Road Phase 3</div>
+        <div class="card-body">Walnut Ave to Clayton Rd — Phase 1 &amp; 2 improvements complete. Pursuing funding for Phase 3 with new Class II bike lanes and concrete curb &amp; gutter.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🗺️</div>
+        <div class="card-title">Cowell Road Corridor</div>
+        <div class="card-body">Monument Blvd to Ygnacio Valley Rd. Evaluating design funding opportunities. Will serve as a key north-south active transportation link.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal" style="margin-top:28px;">
+    <div class="section-label" style="margin-bottom:14px;">Planning Studies — $775,000 Awarded</div>
+    <div class="item-list">
+      <div class="item-row"><div class="item-dot"></div><div class="item-text"><strong>Concord Ave / Galindo St / Monument Blvd Corridor Study</strong> — SR 242 to Mohr Ln. Multi-modal concept development.</div></div>
+      <div class="item-row"><div class="item-dot blue"></div><div class="item-text"><strong>Willow Pass / Galindo / Cowell Road Feasibility Study</strong> — Evaluating protected bike lane configurations and ped crossing improvements.</div></div>
+      <div class="item-row"><div class="item-dot"></div><div class="item-text"><strong>Alberta Way / Pine Hollow Rd Feasibility Study</strong> — Skyler Court to Pine Hollow Court. School-focused safety and active transportation analysis.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ WHAT'S NEXT ══════════ -->
+<section id="tab-whatsnext" class="panel">
+  <div class="reveal">
+    <div class="section-label">The Integrated Vision</div>
+    <h2 class="section-title">Connecting It All Together</h2>
+    <p class="section-desc">Safety data, signal technology, active transportation, and citywide fiber come together in one integrated system — turning individual investments into a connected, intelligent transportation network.</p>
+  </div>
+
+  <div class="focus-grid reveal" style="margin-bottom:36px;">
+    <div class="focus-card">
+      <div class="focus-num">01</div>
+      <div class="focus-icon">🏢</div>
+      <div class="focus-title">Leverage Technology</div>
+      <div class="focus-items">
+        <div class="focus-item">Transportation Management Center (TMC) — tentatively funded</div>
+        <div class="focus-item">Connected LED Streetlights — speed, volume &amp; congestion data</div>
+        <div class="focus-item">Continued fiber optic network expansion</div>
+        <div class="focus-item">Centralized control and real-time alerts</div>
+      </div>
+    </div>
+    <div class="focus-card">
+      <div class="focus-num">02</div>
+      <div class="focus-icon">🔄</div>
+      <div class="focus-title">Traffic Operations</div>
+      <div class="focus-items">
+        <div class="focus-item">Willow Pass Road adaptive — already live</div>
+        <div class="focus-item">Treat Blvd adaptive signal system — in progress</div>
+        <div class="focus-item">ATSPM citywide implementation</div>
+        <div class="focus-item">Reduced delay and travel time for all users</div>
+      </div>
+    </div>
+    <div class="focus-card">
+      <div class="focus-num">03</div>
+      <div class="focus-icon">📊</div>
+      <div class="focus-title">Traffic Safety Analytics</div>
+      <div class="focus-items">
+        <div class="focus-item">Integrated Safety &amp; Collision Dashboard</div>
+        <div class="focus-item">Red-light running and speeding analytics</div>
+        <div class="focus-item">Cross-reference collisions with existing assets</div>
+        <div class="focus-item">Supports data-driven grant applications</div>
+      </div>
+    </div>
+    <div class="focus-card">
+      <div class="focus-num">04</div>
+      <div class="focus-icon">🚶</div>
+      <div class="focus-title">Bicycle &amp; Pedestrian Projects</div>
+      <div class="focus-items">
+        <div class="focus-item">Farm Bureau Phase 3 — pursuing funding</div>
+        <div class="focus-item">Monument Blvd two-way cycle track — pursuing funding</div>
+        <div class="focus-item">BPAC network gap analysis and prioritization</div>
+        <div class="focus-item">Cowell Road design funding pursuit</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TMC + Streetlights -->
+  <div class="reveal" style="margin-bottom:28px;">
+    <div class="section-label" style="margin-bottom:14px;">Transportation Management Center (TMC)</div>
+    <div class="card-grid card-grid-2">
+      <div class="card">
+        <div class="card-icon">🎛️</div>
+        <div class="card-title">Centralized Traffic Control Hub</div>
+        <div class="card-body">The TMC will provide real-time visibility across the entire signal network — enabling operators to respond instantly to incidents, optimize signal timing, and coordinate with emergency services. Tentatively funded.</div>
+      </div>
+      <div class="card blue-top">
+        <div class="card-icon">💡</div>
+        <div class="card-title">Connected LED Streetlights</div>
+        <div class="card-body">Smart streetlights serve as network nodes collecting speed, volume, and congestion data. Auto-alerts on outages, dynamic dimming to reduce energy costs, and longer operational lifetime than conventional fixtures.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fiber Corridors -->
+  <div class="reveal">
+    <div class="section-label" style="margin-bottom:14px;">Fiber Optics Deployment</div>
+    <div class="corridor-list">
+      <div class="corridor-row">
+        <div><div class="corridor-name">Monument Blvd Corridor</div><div class="corridor-sub">Mohr Ln to Clayton Rd</div></div>
+        <div class="status-pill pill-done">✓ Complete</div>
+      </div>
+      <div class="corridor-row">
+        <div><div class="corridor-name">Treat Blvd Corridor</div><div class="corridor-sub">Winton Ave to Clayton Rd</div></div>
+        <div class="status-pill pill-done">✓ Complete</div>
+      </div>
+      <div class="corridor-row">
+        <div><div class="corridor-name">Clayton Road</div><div class="corridor-sub">Galindo St to City Limits</div></div>
+        <div class="status-pill pill-done">✓ Complete</div>
+      </div>
+      <div class="corridor-row">
+        <div><div class="corridor-name">Oak Grove Rd Corridor</div><div class="corridor-sub">Monument Blvd to City Limits</div></div>
+        <div class="status-pill pill-design">◎ In Design</div>
+      </div>
+      <div class="corridor-row">
+        <div><div class="corridor-name">Port Chicago Hwy</div><div class="corridor-sub">Olivera Rd to Sunset Ave</div></div>
+        <div class="status-pill pill-design">◎ In Design</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /panels -->
+
+<footer>
+  <div>Abhishek Parikh, T.E. · Transportation Professional</div>
+  <div><span>transportation-analytics.com</span> · Independent professional portfolio · Not an official city website</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+// ── Donut chart (funding portfolio) ──────────────────────────────────
+(function(){
+  const CATS = [
+    {label:'HSIP Cycles 9–12',            value:24067034, color:'#5b9cf6', pct:56.3, items:[
+      ['C9 — Signal Infrastructure Phase 1 (54 int)','$2,460,800'],
+      ['C10 — Signal Infrastructure Phase 2 (45 int)','$2,360,000'],
+      ['C10 — Protected LT + Mast Arm (9 int)','$1,254,800'],
+      ['C10 — Traffic Safety Around Schools (SA-Ped)','$250,000'],
+      ['C11 — Streetlighting & Safety Improvement','$7,409,970'],
+      ['C11 — RRFB Crosswalk Enhancement (SA-Ped)','$249,984'],
+      ['C11 — Citywide Bike Lane Enhancement (SA-Bike)','$249,480'],
+      ['C12 — Citywide Traffic Signs (8,000 fluorescent signs)','$7,782,500'],
+      ['C12 — Signal Modification – Olivera Rd & Grant St','$932,500'],
+      ['C12 — Traffic Safety at Various Signalized Locations','$1,117,000'],
+    ]},
+    {label:'Active Transportation',        value:10826000, color:'#f5a623', pct:25.3, items:[
+      ['AHSC — Downtown Bike Corridor Project','$3,800,000'],
+      ['OBAG 3 + ATP — Willow Pass Rd Bike Lane / Cycle Track','$3,665,000'],
+      ['OBAG 3 — Galindo Street Multimodal Corridor','$3,361,000'],
+    ]},
+    {label:'Technology & Smart Signals',   value:6434856,  color:'#3ecf8e', pct:15.0, items:[
+      ['MTC IDEA — Conditional Transit Signal Priority','$750,000'],
+      ['Federal Earmark (2021) — Smart Signal, 22 intersections','$1,200,000'],
+      ['Federal Earmark (2022) — HSIP Cycle 10 funding gap','$631,200'],
+      ['OBAG 3 — Countywide Smart Signal (Concord share, 50 int)','$3,853,656'],
+    ]},
+    {label:'Planning & Technical Assistance', value:765700, color:'#00d9c0', pct:1.8, items:[
+      ['Sustainable Transportation Planning — Willow Pass / Cowell / Galindo','$200,000'],
+      ['Sustainable Transportation Planning — Pine Hollow Complete Street','$215,700'],
+      ['MTC PDA Grant — Technical Assistance (SB 743 VMT Thresholds)','$150,000'],
+      ['MTC PDA Grant — Staffing Assistance (Galindo Corridor Plan)','$200,000'],
+    ]},
+    {label:'SS4A / CSAP',                  value:400000,   color:'#ff6b6b', pct:0.9, items:[
+      ['SS4A Action Plan — CSAP / Vision Zero Action Plan development','$400,000'],
+    ]},
+    {label:'Signal Operations',            value:263300,   color:'#b47fff', pct:0.6, items:[
+      ['MTC PASS — Signal timing Ygnacio Valley / Port Chicago / East St','$80,000'],
+      ['MTC PASS — Signal timing Clayton / Galindo-Monument / Treat (54 int)','$183,300'],
+    ]},
+  ];
+  const TOTAL = 42756890;
+  const canvas = document.getElementById('wins-donut');
+  const ctx = canvas.getContext('2d');
+  const CX=140, CY=140, R=125, r=72;
+  let activeIdx = null;
+
+  function fmt(v){return v>=1e6?'$'+(v/1e6).toFixed(1)+'M':'$'+(v/1e3).toFixed(0)+'K';}
+
+  function draw(hover){
+    ctx.clearRect(0,0,280,280);
+    let start = -Math.PI/2;
+    const gap=0.016;
+    CATS.forEach((cat,i)=>{
+      const slice=(cat.value/TOTAL)*(Math.PI*2-gap*CATS.length);
+      const end=start+slice;
+      const hov=hover===i;
+      const mid=start+slice/2;
+      const pull=hov?9:0;
+      const ox=Math.cos(mid)*pull, oy=Math.sin(mid)*pull;
+      ctx.beginPath();
+      ctx.moveTo(CX+ox,CY+oy);
+      ctx.arc(CX+ox,CY+oy,hov?R+9:R,start,end);
+      ctx.arc(CX+ox,CY+oy,r,end,start,true);
+      ctx.closePath();
+      ctx.fillStyle=cat.color;
+      ctx.globalAlpha=(hover!==null&&!hov)?0.28:1;
+      ctx.fill();
+      ctx.globalAlpha=1;
+      cat._s=start; cat._e=end;
+      start=end+gap;
+    });
+    const cv=document.getElementById('wins-ctr-val');
+    const cl=document.getElementById('wins-ctr-lbl');
+    if(hover!==null){
+      cv.textContent=fmt(CATS[hover].value);
+      cv.style.color=CATS[hover].color;
+      cl.innerHTML=CATS[hover].label+'<br><span style="color:#7a90b0">'+CATS[hover].pct+'%</span>';
+    } else {
+      cv.textContent='$42.8M';
+      cv.style.color='var(--text)';
+      cl.innerHTML='Total Funded<br>All Sources';
+    }
+  }
+
+  function hit(mx,my){
+    const dx=mx-CX,dy=my-CY,d=Math.sqrt(dx*dx+dy*dy);
+    if(d<r||d>R+12) return null;
+    let a=Math.atan2(dy,dx);
+    if(a<-Math.PI/2) a+=Math.PI*2;
+    for(let i=0;i<CATS.length;i++) if(a>=CATS[i]._s&&a<=CATS[i]._e) return i;
+    return null;
+  }
+
+  function showDetail(i){
+    const cat=CATS[i];
+    document.getElementById('wins-detail-title').textContent=cat.label;
+    document.getElementById('wins-detail-amt').innerHTML=
+      '<span style="font-size:14px;font-weight:800;color:'+cat.color+'">'+fmt(cat.value)+'</span>'+
+      ' <span style="font-size:10px;color:var(--muted)">('+cat.pct+'% of portfolio)</span>';
+    document.getElementById('wins-detail-items').innerHTML=cat.items.map(([n,a])=>
+      '<div class="wins-item-row"><span style="color:var(--text)">'+n+'</span>'+
+      '<span style="font-weight:700;white-space:nowrap;color:'+cat.color+'">'+a+'</span></div>'
+    ).join('');
+    document.getElementById('wins-detail').classList.add('show');
+    document.querySelectorAll('.wli').forEach((el,j)=>{
+      el.style.opacity=j===i?'1':'0.3';
+      el.style.background=j===i?'rgba(255,255,255,0.05)':'';
+    });
+  }
+
+  function clearDetail(){
+    document.getElementById('wins-detail').classList.remove('show');
+    document.querySelectorAll('.wli').forEach(el=>{el.style.opacity='1';el.style.background='';});
+  }
+
+  canvas.addEventListener('mousemove',e=>{
+    const rect=canvas.getBoundingClientRect();
+    const i=hit(e.clientX-rect.left,e.clientY-rect.top);
+    if(i!==activeIdx){activeIdx=i;draw(i);if(i!==null)showDetail(i);else clearDetail();}
+    canvas.style.cursor=i!==null?'pointer':'default';
+  });
+  canvas.addEventListener('mouseleave',()=>{activeIdx=null;draw(null);clearDetail();});
+
+  // Build legend
+  const leg=document.getElementById('wins-legend');
+  CATS.forEach((cat,i)=>{
+    const el=document.createElement('div');
+    el.className='wli';
+    el.innerHTML=
+      '<div class="wli-dot" style="background:'+cat.color+'"></div>'+
+      '<div class="wli-name">'+cat.label+'</div>'+
+      '<div class="wli-amt" style="color:'+cat.color+'">'+fmt(cat.value)+'</div>'+
+      '<div class="wli-pct">'+cat.pct+'%</div>';
+    el.addEventListener('mouseenter',()=>{activeIdx=i;draw(i);showDetail(i);});
+    el.addEventListener('mouseleave',()=>{activeIdx=null;draw(null);clearDetail();});
+    leg.appendChild(el);
+  });
+
+  draw(null);
+})();
+
+// ── Tab switching ────────────────────────────────────────────────────
+function switchTab(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  triggerReveals();
+}
+
+// ── Scroll-reveal ────────────────────────────────────────────────────
+function triggerReveals(){
+  const reveals=document.querySelectorAll('.panel.active .reveal');
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach((e,i)=>{
+      if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);obs.unobserve(e.target);}
+    });
+  },{threshold:0.05});
+  reveals.forEach(el=>{el.classList.remove('visible');obs.observe(el);});
+}
+document.addEventListener('DOMContentLoaded',()=>setTimeout(triggerReveals,100));
+</script>
+</body>
+</html>
