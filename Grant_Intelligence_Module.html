@@ -512,14 +512,14 @@ canvas { background: transparent !important; }
 <div class="layout">
 <div class="tabs">
   <button class="tb on"  onclick="tab(this,'history')">📋 Concord History</button>
-  <button class="tb"     onclick="tab(this,'applog')">📁 HSIP App Log</button>
-  <button class="tb"     onclick="tab(this,'collision')">🚨 Collision Data</button>
-  <button class="tb"     onclick="tab(this,'trends')">📈 Countermeasure Trends</button>
-  <button class="tb"     onclick="tab(this,'gaps')">🎯 Gap Analysis</button>
-  <button class="tb"     onclick="tab(this,'recs')">🏆 HSIP C13 Recs</button>
-  <button class="tb"     onclick="tab(this,'intel')">🧠 Program Intelligence</button>
-  <button class="tb"     onclick="tab(this,'ss4a')" style="color:var(--acc2)">🛡 SS4A Strategy</button>
-  <button class="tb"     onclick="tab(this,'wins')" style="color:var(--acc3)">💰 Other Funding Wins</button>
+  <button class="tb"     onclick="gateTab(this,'applog')">📁 HSIP App Log 🔒</button>
+  <button class="tb"     onclick="gateTab(this,'collision')">🚨 Collision Data 🔒</button>
+  <button class="tb"     onclick="gateTab(this,'trends')">📈 Countermeasure Trends 🔒</button>
+  <button class="tb"     onclick="gateTab(this,'gaps')">🎯 Gap Analysis 🔒</button>
+  <button class="tb"     onclick="gateTab(this,'recs')">🏆 HSIP C13 Recs 🔒</button>
+  <button class="tb"     onclick="gateTab(this,'intel')">🧠 Program Intelligence 🔒</button>
+  <button class="tb"     onclick="gateTab(this,'ss4a')" style="color:var(--acc2)">🛡 SS4A Strategy 🔒</button>
+  <button class="tb"     onclick="gateTab(this,'wins')" style="color:var(--acc3)">💰 Other Funding Wins 🔒</button>
 </div>
 <div class="panes">
 
@@ -2319,5 +2319,125 @@ function hubTab(id){
 })();
 
 </script>
+
+<!-- ── GRANT TAB LOCK OVERLAY ── -->
+<div id="grant-tab-overlay" style="
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:rgba(7,12,23,0.92);backdrop-filter:blur(14px);
+  align-items:center;justify-content:center;
+">
+  <div style="
+    background:#111f35;border:1px solid rgba(70,110,200,0.3);border-radius:18px;
+    padding:36px 40px;max-width:360px;width:90%;text-align:center;
+    box-shadow:0 32px 80px rgba(0,0,0,0.7);
+  ">
+    <div style="font-size:28px;margin-bottom:12px;">🔒</div>
+    <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;">Restricted Tab</div>
+    <div style="font-size:11px;color:#607090;font-family:'IBM Plex Mono',monospace;margin-bottom:22px;letter-spacing:.5px;">Grant Intelligence · Protected Content</div>
+    <div style="position:relative;margin-bottom:10px;">
+      <input type="password" id="grant-tab-pw" placeholder="Enter password"
+        autocomplete="off" spellcheck="false"
+        style="width:100%;padding:11px 40px 11px 14px;background:#162b4d;
+        border:1px solid rgba(70,110,200,0.3);border-radius:8px;color:#d8e4ff;
+        font-size:14px;outline:none;font-family:'Inter',sans-serif;
+        transition:border-color .2s;box-sizing:border-box;"
+        onfocus="this.style.borderColor='#5b9cf6'"
+        onblur="this.style.borderColor='rgba(70,110,200,0.3)'">
+      <button onclick="toggleGrantTabPw()" tabindex="-1"
+        style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
+        background:none;border:none;cursor:pointer;font-size:15px;padding:2px;">👁</button>
+    </div>
+    <div id="grant-tab-error" style="font-size:11px;color:#ef4444;min-height:16px;margin-bottom:10px;"></div>
+    <button onclick="submitGrantTabPw()"
+      style="width:100%;padding:11px;border-radius:8px;background:#005EB8;
+      border:none;color:#fff;font-size:13px;font-weight:600;cursor:pointer;
+      font-family:'Inter',sans-serif;margin-bottom:8px;transition:background .2s;"
+      onmouseover="this.style.background='#004a94'"
+      onmouseout="this.style.background='#005EB8'">Unlock</button>
+    <button onclick="closeGrantTabOverlay()"
+      style="background:none;border:none;color:#607090;font-size:12px;
+      cursor:pointer;padding:6px;font-family:'Inter',sans-serif;width:100%;">Cancel</button>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#607090;margin-top:12px;letter-spacing:.3px;">
+      Session access only · Closes when tab closes
+    </div>
+  </div>
+</div>
+
+<script>
+// ── GRANT TAB GATE ──
+const GRANT_TAB_HASH = '30a46b11483d6cae5674891beeb0bae0ed2084005830d7673f2fdd090d94c20b'; // $$Transportation26$$
+const GRANT_TAB_KEY  = 'grant_tab_auth_v1';
+let _pendingTab = null;
+let _pendingBtn = null;
+
+async function sha256gt(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+function isGrantTabUnlocked() {
+  return sessionStorage.getItem(GRANT_TAB_KEY) === 'true';
+}
+function gateTab(btn, id) {
+  if (isGrantTabUnlocked()) {
+    tab(btn, id);
+  } else {
+    _pendingTab = id;
+    _pendingBtn = btn;
+    const ov = document.getElementById('grant-tab-overlay');
+    ov.style.display = 'flex';
+    setTimeout(() => {
+      const inp = document.getElementById('grant-tab-pw');
+      inp.value = '';
+      inp.style.borderColor = 'rgba(70,110,200,0.3)';
+      document.getElementById('grant-tab-error').textContent = '';
+      inp.focus();
+    }, 60);
+  }
+}
+function closeGrantTabOverlay() {
+  document.getElementById('grant-tab-overlay').style.display = 'none';
+  _pendingTab = null;
+  _pendingBtn = null;
+}
+async function submitGrantTabPw() {
+  const inp = document.getElementById('grant-tab-pw');
+  const val = inp.value;
+  if (!val) return;
+  const hash = await sha256gt(val);
+  if (hash === GRANT_TAB_HASH) {
+    sessionStorage.setItem(GRANT_TAB_KEY, 'true');
+    document.getElementById('grant-tab-overlay').style.display = 'none';
+    tab(_pendingBtn, _pendingTab);
+    _pendingTab = null; _pendingBtn = null;
+    // Remove lock icons from all tab buttons now that unlocked
+    document.querySelectorAll('.tb').forEach(b => {
+      b.textContent = b.textContent.replace(' 🔒', '');
+    });
+  } else {
+    inp.style.borderColor = '#ef4444';
+    document.getElementById('grant-tab-error').textContent = 'Incorrect password. Try again.';
+    inp.value = '';
+    setTimeout(() => { inp.style.borderColor = 'rgba(70,110,200,0.3)'; }, 800);
+    inp.focus();
+  }
+}
+function toggleGrantTabPw() {
+  const inp = document.getElementById('grant-tab-pw');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+document.getElementById('grant-tab-pw').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitGrantTabPw();
+  if (e.key === 'Escape') closeGrantTabOverlay();
+});
+// If already unlocked from a previous click this session, remove lock icons immediately
+if (isGrantTabUnlocked()) {
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.tb').forEach(b => {
+      b.textContent = b.textContent.replace(' 🔒', '');
+    });
+  });
+}
+</script>
+
 </body>
 </html>
